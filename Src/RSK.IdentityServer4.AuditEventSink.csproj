@@ -14,10 +14,8 @@
     <RootNamespace>RSK.IdentityServer4.AuditEventSink</RootNamespace>
     <PackageReleaseNotes>Initial release provides Audit Event Sink to add audit records into Admin UI Auditing</PackageReleaseNotes>
     <PackageIconUrl>https://www.identityserver.com/img/logos/rsk</PackageIconUrl>
-    <PackageLicenseFile>..\License.txt</PackageLicenseFile>
-    <!--
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    -->
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="IdentityServer4" Version="2.3.2" />
