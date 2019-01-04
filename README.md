@@ -1,2 +1,2 @@
 # RSK.IdentityServer4.AuditEventSink
-IdentityServer4 Event Sink Adapter to work with RSK.Audit package
+Provides Audit Event Sink to add audit records into Admin UI Auditing
