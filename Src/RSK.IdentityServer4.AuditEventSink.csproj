@@ -22,6 +22,6 @@
     <PackageReference Include="Rsk.Audit" Version="1.0.0.33" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\License.txt" Pack="true" PackagePath="AuditLicense.txt" />
+    <None Include="License.txt" Pack="true" PackagePath="License.txt" />
   </ItemGroup>
 </Project>
