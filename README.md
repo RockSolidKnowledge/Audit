@@ -47,7 +47,7 @@ As you can see from this code our EventSinkAggreator allows you to have more tha
 
 # AuditSink Events
 
-When you review the documentation for the events raised by IdentityServer (see here)[http://docs.identityserver.io/en/latest/topics/events.html] you will see that there are a number of useful events which will be a great addition to the AdminUI Audit records, however there are a few which don’t fit in.  Due to this, the AuditSink will only handle the following events;
+When you review the documentation for the events raised by IdentityServer [see here](http://docs.identityserver.io/en/latest/topics/events.html) you will see that there are a number of useful events which are a great addition to the AdminUI Audit records, however there are a few which don’t fit in.  Due to this, the AuditSink will only handle the following events;
 
 * TokenIssuedSuccessEvent and TokenIssuedFailureEvent
 * UserLoginSuccessEvent and UserLoginFailureEvent
