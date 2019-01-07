@@ -30,7 +30,7 @@ Lets review what the code actually does.  The initial section of code sets up th
 
 The AuditSink acts as our conduit between the two by accepting the events raised by IdentityServer and funnelling them over to the AdminUI Audit process.
 
-#Event Sink Aggregator
+# Event Sink Aggregator
 
 One of the small things missing in the event sink process within IdentityServer is ability to have more than one sink.  As we always like to go that little further we have also created an sink aggregator, which you can use in the following way;
 
@@ -45,7 +45,7 @@ services.AddSingleton<IEventSink>(provider => new EventSinkAggregator(_loggerFac
 
 As you can see from this code our EventSinkAggreator allows you to have more than one event sink in play without one affecting the other.  So, if for any reason, an event sink raises and exception we log that information and ensure all other event sinks in the aggregator still get notified of the IdentityServer events.
 
-#AuditSink Events
+# AuditSink Events
 
 When you review the documentation for the events raised by IdentityServer (see here) you will see that there are a number of useful events which will be a great addition to the AdminUI Audit records, however there are a few which don’t fit in.  Due to this, the AuditSink will only handle the following events;
 
