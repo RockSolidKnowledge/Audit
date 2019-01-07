@@ -2,12 +2,12 @@
 Provides Audit Event Sink to add audit records into Admin UI Auditing
 
 # How Does It Work?
-To start feeding the events raised from IdentityServer in the Audit process within AdminUI all you need to do is add a reference to the AdminUI Audit Provider and the AdminUI Audit Sink.  You can find these packages here;
+To start feeding the events raised from IdentityServer into the Audit process within AdminUI all you need to do is add a reference to the AdminUI Audit Provider and the AdminUI Audit Sink.  You can find these packages here;
 
 [url to nuget packages]
 [url to nuget packages]
 
-IdentityServer has a number of events built into it however they are not automatically surfaced to do that you need to enable them;
+IdentityServer has a number of events built into it however they are not automatically surfaced, to do that you need to enable them;
 ```csharp
 services.AddIdentityServer(options =>
 {
@@ -28,11 +28,11 @@ services.AddSingleton<IEventSink>(provider => new AuditSink(auditRecorder));
 ```
 Lets review what the code actually does.  The initial section of code sets up the AdminUI Audit recorder, this acts as our funnel, and it directs the events into the audit tables used by AdminUI.
 
-The AuditSink acts as our conduit between the two by accepting the events raised by IdentityServer and funnelling them over to the AdminUI Audit process.
+The AuditSink acts as our conduit between the two, by accepting the events raised by IdentityServer and funnelling them over to the AdminUI Audit process.
 
 # Event Sink Aggregator
 
-One of the small things missing in the event sink process within IdentityServer is ability to have more than one sink.  As we always like to go that little further we have also created an sink aggregator, which you can use in the following way;
+One of the small things missing in the event sink process within IdentityServer is the ability to use more than one sink.  As we always like to go that little further we have also created an sink aggregator, which you can use in the following way;
 ```csharp
 services.AddSingleton<IEventSink>(provider => new EventSinkAggregator(_loggerFactory.CreateLogger("EventSinkAggregator"))
             {
@@ -47,7 +47,7 @@ As you can see from this code our EventSinkAggreator allows you to have more tha
 
 # AuditSink Events
 
-When you review the documentation for the events raised by IdentityServer (see here) you will see that there are a number of useful events which will be a great addition to the AdminUI Audit records, however there are a few which don’t fit in.  Due to this, the AuditSink will only handle the following events;
+When you review the documentation for the events raised by IdentityServer [http://docs.identityserver.io/en/latest/topics/events.html](see here) you will see that there are a number of useful events which will be a great addition to the AdminUI Audit records, however there are a few which don’t fit in.  Due to this, the AuditSink will only handle the following events;
 
 * TokenIssuedSuccessEvent and TokenIssuedFailureEvent
 * UserLoginSuccessEvent and UserLoginFailureEvent
