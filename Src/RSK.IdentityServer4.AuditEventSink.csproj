@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Christopher Myhill</Authors>
+    <Authors>Rock Solid Knowledge</Authors>
     <Copyright>Rock Solid Knowledge</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Rock Solid Knowledge Ltd</Company>
