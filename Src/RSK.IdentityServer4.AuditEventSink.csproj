@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;netstandard2.0</TargetFrameworks>
     <Authors>Rock Solid Knowledge</Authors>
     <Copyright>Rock Solid Knowledge</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -16,12 +16,23 @@
     <PackageIconUrl>https://www.identityserver.com/img/logos/rsk</PackageIconUrl>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>1.1.0-preview1</Version>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="2.3.2" />
-    <PackageReference Include="Rsk.Audit" Version="1.0.0.33" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+    <PackageReference Include="IdentityServer4" Version="3.0.1" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="IdentityServer4" Version="[2.3.2,3.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rsk.Audit" Version="1.1.0-preview1" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="License.txt" Pack="true" PackagePath="License.txt" />
   </ItemGroup>
+
 </Project>

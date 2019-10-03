@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
 using Moq;
 using Xunit;
 
@@ -41,9 +38,9 @@ namespace RSK.IdentityServer4.AuditEventSink.Tests
             var sink2 = new StubSink();
             var sink3 = new StubSinkThrowsException();
 
-            var logger = new Mock<ILogger>();
+            var logger = new StubLogger();
 
-            var sut = new EventSinkAggregator(logger.Object);
+            var sut = new EventSinkAggregator(logger);
 
             sut.EventSinks.Add(sink1);
             sut.EventSinks.Add(sink2);
@@ -56,7 +53,7 @@ namespace RSK.IdentityServer4.AuditEventSink.Tests
             Assert.Equal(1, sink1.WasCalled);
             Assert.Equal(1, sink2.WasCalled);
             Assert.Equal(1, sink3.WasCalled);
-            logger.Verify(x => x.Log(LogLevel.Error, 0, It.IsAny<object>(), null, It.IsAny<Func<object, Exception, string>>()), Times.Once);
+            Assert.Equal(1, logger.TimesErrored);
         }
 
         private class StubSink : IEventSink
@@ -85,6 +82,23 @@ namespace RSK.IdentityServer4.AuditEventSink.Tests
         {
             public StubEvent() : base(string.Empty, string.Empty, EventTypes.Failure, 0)
             {
+            }
+        }
+
+        private class StubLogger : ILogger
+        {
+            public int TimesErrored = 0;
+            
+            public IDisposable BeginScope<TState>(TState state)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsEnabled(LogLevel logLevel) => true;
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+            {
+                if (logLevel == LogLevel.Error) TimesErrored++;
             }
         }
     }
