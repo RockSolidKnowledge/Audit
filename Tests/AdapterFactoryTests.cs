@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4.Events;
-using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.ResponseHandling;
 using IdentityServer4.Validation;

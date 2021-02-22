@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using IdentityServer4.Events;
 using RSK.Audit;
 
