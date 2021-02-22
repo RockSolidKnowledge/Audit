@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Rock Solid Knowledge Ltd</Authors>
+    <Description>Provides Audit Event Sink to add audit records into AdminUI Auditing</Description>
+    <PackageProjectUrl>https://www.identityserver.com/products/saml2p</PackageProjectUrl>
+    <PackageReleaseNotes>Initial release provides Audit Event Sink to add audit records into Admin UI Auditing</PackageReleaseNotes>
+    <Copyright>Copyright 2021 (c) Rock Solid Knowledge Ltd. All rights reserved</Copyright>
+    <PackageTags>Audit AdminUI IdentityServer Events</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    
+    <Version>1.1.0-preview2</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="IdentityServer4" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rsk.Audit" Version="1.1.0-preview1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\icon.png" Pack="true" PackagePath="icon.png" />
+    <None Include="License.txt" Pack="true" PackagePath="License.txt" />
+  </ItemGroup>
+
+</Project>

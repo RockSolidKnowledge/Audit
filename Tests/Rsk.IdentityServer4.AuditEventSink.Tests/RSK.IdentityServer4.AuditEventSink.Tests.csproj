@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
-
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -17,16 +16,8 @@
     <PackageReference Include="IdentityServer4" Version="3.1.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="IdentityServer4" Version="3.0.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-    <PackageReference Include="IdentityServer4" Version="[2.3.2,3.0.0)" />
-  </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Src\RSK.IdentityServer4.AuditEventSink.csproj" />
+    <ProjectReference Include="..\..\src\RSK.IdentityServer4.AuditEventSink\RSK.IdentityServer4.AuditEventSink.csproj" />
   </ItemGroup>
 
 </Project>
