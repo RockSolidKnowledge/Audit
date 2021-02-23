@@ -1,14 +1,14 @@
 ﻿using System;
-using IdentityServer4.Events;
+using Duende.IdentityServer.Events;
 using RSK.Audit;
 
-namespace RSK.IdentityServer4.AuditEventSink.Adapters
+namespace Rsk.DuendeIdentityServer.AuditEventSink.Adapters
 {
-    public class TokenIssuedFailureEventAdapter : IAuditEventArguments
+    public class TokenIssuedSuccessEventAdapter : IAuditEventArguments
     {
-        private readonly TokenIssuedFailureEvent evt;
+        private readonly TokenIssuedSuccessEvent evt;
 
-        public TokenIssuedFailureEventAdapter(TokenIssuedFailureEvent evt)
+        public TokenIssuedSuccessEventAdapter(TokenIssuedSuccessEvent evt)
         {
             this.evt = evt ?? throw new ArgumentNullException(nameof(evt));
         }

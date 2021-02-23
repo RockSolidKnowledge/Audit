@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Authors>Rock Solid Knowledge Ltd</Authors>
+        <Description>Duende IdentityServer event sink to add audit records into AdminUI auditing</Description>
+        <PackageProjectUrl>https://github.com/RockSolidKnowledge/RSK.IdentityServer4.AuditEventSink</PackageProjectUrl>
+        <PackageReleaseNotes>Initial Duende IdentityServer release.</PackageReleaseNotes>
+        <Copyright>Copyright 2021 (c) Rock Solid Knowledge Ltd. All rights reserved</Copyright>
+        <PackageTags>Audit AdminUI IdentityServer Events</PackageTags>
+        <IncludeSymbols>true</IncludeSymbols>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+        <Version>1.1.0</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Duende.IdentityServer" Version="5.0.0" />
+        <PackageReference Include="Rsk.Audit" Version="1.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\icon.png" Pack="true" PackagePath="icon.png" />
+        <None Include="..\..\License.txt" Pack="true" PackagePath="License.txt" />
+    </ItemGroup>
+
+</Project>

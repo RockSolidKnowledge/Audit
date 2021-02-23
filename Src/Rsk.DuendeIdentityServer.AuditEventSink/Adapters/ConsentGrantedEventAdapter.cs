@@ -1,7 +1,7 @@
-﻿using IdentityServer4.Events;
+﻿using Duende.IdentityServer.Events;
 using RSK.Audit;
 
-namespace RSK.IdentityServer4.AuditEventSink.Adapters
+namespace Rsk.DuendeIdentityServer.AuditEventSink.Adapters
 {
     public class ConsentGrantedEventAdapter : IAuditEventArguments
     {

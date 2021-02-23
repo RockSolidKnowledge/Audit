@@ -6,16 +6,16 @@ namespace RSK.IdentityServer4.AuditEventSink.Adapters
 {
     public class TokenIssuedSuccessEventAdapter : IAuditEventArguments
     {
-        private readonly TokenIssuedSuccessEvent _evt;
+        private readonly TokenIssuedSuccessEvent evt;
 
         public TokenIssuedSuccessEventAdapter(TokenIssuedSuccessEvent evt)
         {
-            _evt = evt ?? throw new ArgumentNullException(nameof(evt));
+            this.evt = evt ?? throw new ArgumentNullException(nameof(evt));
         }
 
-        public ResourceActor Actor => new ResourceActor(ResourceActor.MachineSubjectType, _evt.ClientId, _evt.ClientName);
-        public string Action => _evt.Name;
-        public AuditableResource Resource => new AuditableResource("IdentityServer", _evt.Endpoint);
-        public FormattedString Description => _evt.ToString().SafeForFormatted();
+        public ResourceActor Actor => new ResourceActor(ResourceActor.MachineSubjectType, evt.ClientId, evt.ClientName);
+        public string Action => evt.Name;
+        public AuditableResource Resource => new AuditableResource("IdentityServer", evt.Endpoint);
+        public FormattedString Description => evt.ToString().SafeForFormatted();
     }
 }

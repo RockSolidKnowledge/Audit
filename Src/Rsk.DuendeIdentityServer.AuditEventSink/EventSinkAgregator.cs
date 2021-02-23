@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Services;
 using Microsoft.Extensions.Logging;
 
-namespace RSK.IdentityServer4.AuditEventSink
+namespace Rsk.DuendeIdentityServer.AuditEventSink
 {
     public class EventSinkAggregator : IEventSink
     {

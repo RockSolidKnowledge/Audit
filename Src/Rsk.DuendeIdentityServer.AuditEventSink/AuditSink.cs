@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Services;
 using RSK.Audit;
 
-[assembly:InternalsVisibleTo("RSK.IdentityServer4.AuditEventSink.Tests")]
+[assembly:InternalsVisibleTo("RSK.DuendeIdentityServer.AuditEventSink.Tests")]
 
-namespace RSK.IdentityServer4.AuditEventSink
+namespace Rsk.DuendeIdentityServer.AuditEventSink
 {
     public class AuditSink : IEventSink
     {
