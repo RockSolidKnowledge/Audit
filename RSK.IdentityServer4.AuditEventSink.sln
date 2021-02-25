@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28306.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rsk.IdentityServer4.AuditEventSink", "src\Rsk.IdentityServer4.AuditEventSink\Rsk.IdentityServer4.AuditEventSink.csproj", "{E752B37B-6562-4DC5-8657-620FE569905A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rsk.IdentityServer4.AuditEventSink", "src\RSK.IdentityServer4.AuditEventSink\RSK.IdentityServer4.AuditEventSink.csproj", "{E752B37B-6562-4DC5-8657-620FE569905A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4AD87BDC-20A4-4426-80E4-0706AA9D8294}"
 EndProject
