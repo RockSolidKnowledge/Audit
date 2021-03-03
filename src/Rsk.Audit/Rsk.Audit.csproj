@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <PackageId>RSK.Audit</PackageId>
+    <Authors>Rock Solid Knowledge Ltd</Authors>
+    <Product>RSK.Audit</Product>
+    <Description>Provides audting API to record audit records and query api to find audit records</Description>
+    <PackageProjectUrl>https://www.identityserver.com/products/adminui</PackageProjectUrl>
+    <PackageReleaseNotes>https://www.identityserver.com/downloads/adminui</PackageReleaseNotes>
+    <Copyright>Copyright 2021 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
+    <PackageTags>Audit AdminUI IdentityServer</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>    
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RootNamespace>RSK.Audit</RootNamespace>
+  </PropertyGroup>
+
+  <!--don't warn about missing comments-->
+  <PropertyGroup>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="[3.1.0,4.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\License.txt" Pack="true" PackagePath="License.txt" />
+    <None Include="..\..\icon.png" Pack="true" PackagePath="icon.png" />
+  </ItemGroup>
+
+</Project>
