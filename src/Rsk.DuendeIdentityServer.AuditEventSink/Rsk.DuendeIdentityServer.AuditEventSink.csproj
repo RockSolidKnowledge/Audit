@@ -10,9 +10,7 @@
         <PackageTags>Audit AdminUI IdentityServer Events</PackageTags>
         <IncludeSymbols>true</IncludeSymbols>
         <PackageIcon>icon.png</PackageIcon>
-        <PackageLicenseFile>License.txt</PackageLicenseFile>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <Version>1.0.0</Version>
     </PropertyGroup>
 
@@ -23,7 +21,6 @@
 
     <ItemGroup>
         <None Include="..\..\icon.png" Pack="true" PackagePath="icon.png" />
-        <None Include="..\..\License.txt" Pack="true" PackagePath="License.txt" />
     </ItemGroup>
 
 </Project>

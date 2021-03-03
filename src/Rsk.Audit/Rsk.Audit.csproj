@@ -12,10 +12,10 @@
     <PackageTags>Audit AdminUI IdentityServer</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageIcon>icon.png</PackageIcon>    
-    <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RootNamespace>RSK.Audit</RootNamespace>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <!--don't warn about missing comments-->
@@ -32,7 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\License.txt" Pack="true" PackagePath="License.txt" />
     <None Include="..\..\icon.png" Pack="true" PackagePath="icon.png" />
   </ItemGroup>
 
