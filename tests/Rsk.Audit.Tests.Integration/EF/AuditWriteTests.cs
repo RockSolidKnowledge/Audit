@@ -10,19 +10,17 @@ namespace Rsk.Audit.Tests.Integration.EF
     [Collection("AuditWriteTests")]
     public class AuditWriteTests
     {
-        private string auditSource = "Test";
-        private AuditDatabaseContext databaseContext;
-
-        private AuditProviderFactory auditProviderFactory;
+        private const string AuditSource = "Test";
+        private readonly AuditDatabaseContext databaseContext;
+        private readonly AuditProviderFactory auditProviderFactory;
 
         public AuditWriteTests()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AuditDatabaseContext>();
+            var options = new DbContextOptionsBuilder<AuditDatabaseContext>()
+                .UseInMemoryDatabase(nameof(AuditWriteTests))
+                .Options;
 
-            var options = optionsBuilder
-                .UseSqlServer(@"server=.\SQLEXPRESS;database=AuditWriteTests;integrated security=true").Options;
-              
-           databaseContext = new AuditDatabaseContext(options);
+            databaseContext = new AuditDatabaseContext(options);
 
             databaseContext.Database.EnsureDeleted();
             databaseContext.Database.EnsureCreated();
@@ -34,53 +32,53 @@ namespace Rsk.Audit.Tests.Integration.EF
         public void GivenIHaveAnAuditSource_WhenAnAttemptIsMadeToRecordSuccess_ThenShouldWriteNewAuditEntryInDatabase()
         {
             var expectedSubject = new UserResourceActor("andy");
-            string expectedtedAction = "Login";
-            string expectedDescription = "Logging in";
+            const string expectedtedAction = "Login";
             var expectedResource = new AuditableResource("Client", "3232-4343-342-34123", "AdminUI");
+            const string expectedDescription = "Logging in";
 
             var sut = CreateSut();
 
             sut.RecordSuccess(AuditContextMockingHelper.CreateAuditEventContext( expectedSubject,expectedtedAction,expectedResource,expectedDescription)).Wait();
 
-            var auditEntry = databaseContext.AuditEntries.Single(ae => ae.Succeeded && 
-                                                                 ae.SubjectIdentifier == expectedSubject.Identifier &&
-                                                                 ae.SubjectType == expectedSubject.Type &&
-                                                                 ae.Action == expectedtedAction &&
-                                                                 ae.Resource == expectedResource.Name &&
-                                                                 ae.ResourceType == expectedResource.Type &&
-                                                                 ae.ResourceIdentifier == expectedResource.Identifier &&
-                                                                 ae.Description == expectedDescription);
+            var auditEntries = databaseContext.AuditEntries.Where(ae => ae.Succeeded &&
+                                                                      ae.SubjectIdentifier == expectedSubject.Identifier &&
+                                                                      ae.SubjectType == expectedSubject.Type &&
+                                                                      ae.Action == expectedtedAction &&
+                                                                      ae.Resource == expectedResource.Name &&
+                                                                      ae.ResourceType == expectedResource.Type &&
+                                                                      ae.ResourceIdentifier == expectedResource.Identifier &&
+                                                                      ae.Description == expectedDescription).ToList();
 
-            Assert.True(true); // If there is not a single entry that passes then previous line will throw 
+            Assert.Single(auditEntries);
         }
 
         [Fact]
         public void GivenIHaveAnAuditSource_WhenAnAttemptIsMadeToRecordFailure_ThenShouldWriteNewAuditEntryInDatabase()
         {
             var expectedSubject = new UserResourceActor("andy");
-            string expectedtedAction = "Login";
-            string expectedDescription = "Logging in";
+            const string expectedtedAction = "Login";
             var expectedResource = new AuditableResource("Client","3232-4343-342-34123","AdminUI");
+            const string expectedDescription = "Logging in";
 
             var sut = CreateSut();
 
             sut.RecordFailure(AuditContextMockingHelper.CreateAuditEventContext(expectedSubject, expectedtedAction, expectedResource,expectedDescription)).Wait();
 
-            var auditEntry = databaseContext.AuditEntries.Single(ae => !ae.Succeeded &&
-                                                                       ae.SubjectIdentifier == expectedSubject.Identifier &&
-                                                                       ae.SubjectType == expectedSubject.Type &&
-                                                                       ae.Action == expectedtedAction &&
-                                                                       ae.Resource == expectedResource.Name &&
-                                                                       ae.ResourceType == expectedResource.Type &&
-                                                                       ae.ResourceIdentifier == expectedResource.Identifier &&
-                                                                       ae.Description == expectedDescription);
+            var auditEntries = databaseContext.AuditEntries.Where(ae => !ae.Succeeded &&
+                                                                        ae.SubjectIdentifier == expectedSubject.Identifier &&
+                                                                        ae.SubjectType == expectedSubject.Type &&
+                                                                        ae.Action == expectedtedAction &&
+                                                                        ae.Resource == expectedResource.Name &&
+                                                                        ae.ResourceType == expectedResource.Type &&
+                                                                        ae.ResourceIdentifier == expectedResource.Identifier &&
+                                                                        ae.Description == expectedDescription).ToList();
 
-            Assert.True(true); // If there is not a single entry that passes then previous line will throw 
+            Assert.Single(auditEntries);
         }
 
-        IRecordAuditableActions CreateSut()
+        private IRecordAuditableActions CreateSut()
         {
-            return auditProviderFactory.CreateAuditSource(auditSource);
+            return auditProviderFactory.CreateAuditSource(AuditSource);
         }
     }
 }

@@ -1,11 +1,7 @@
-﻿#if NETCOREAPP2_1
-using System.Data.SqlClient;
-#else
-using Microsoft.Data.SqlClient;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RSK.Audit;
 using RSK.Audit.EF;
@@ -17,55 +13,39 @@ namespace Rsk.Audit.Tests.Integration.EF
     [Collection("AuditQueryIntegrationTests")]
     public class AuditQueryIntegrationTests
     {
-        private AuditDatabaseContext databaseContext;
-
-        private AuditProviderFactory auditProviderFactory;
-        private DbContextOptions<AuditDatabaseContext> dbContextOptions;
+        private readonly AuditProviderFactory auditProviderFactory;
+        private readonly DbContextOptions<AuditDatabaseContext> dbContextOptions;
 
         public AuditQueryIntegrationTests()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AuditDatabaseContext>();
+            dbContextOptions = new DbContextOptionsBuilder<AuditDatabaseContext>()
+                .UseInMemoryDatabase(nameof(AuditQueryIntegrationTests))
+                .Options;
 
-            string connectionString = @"server=.\SQLEXPRESS;database=AuditQueryIntegrationTests;integrated security=true";
-            string masterConnectionString = @"server=.\SQLEXPRESS;database=master;integrated security=true";
-
-            dbContextOptions = optionsBuilder
-                .UseSqlServer(connectionString).Options;
-
-            databaseContext = new AuditDatabaseContext(dbContextOptions);
+            var databaseContext = new AuditDatabaseContext(dbContextOptions);
             databaseContext.Database.EnsureDeleted();
-
-            ExecuteCommand("CREATE DATABASE AuditQueryIntegrationTests", masterConnectionString);
-            ExecuteCommand("ALTER DATABASE audit SET SINGLE_USER WITH ROLLBACK IMMEDIATE", masterConnectionString);
-            ExecuteCommand("ALTER DATABASE audit COLLATE Latin1_General_CS_AS", masterConnectionString);
-            ExecuteCommand("ALTER DATABASE audit SET MULTI_USER", masterConnectionString);
-
-            SqlConnection.ClearAllPools();
             databaseContext.Database.EnsureCreated();
 
             auditProviderFactory = new RSK.Audit.EF.AuditProviderFactory(dbContextOptions);
         }
 
         [Fact]
-        public void GivenAQuery_ShouldReturnRecordsBetweenDatesSpecifiedAndNoMore()
+        public async Task GivenAQuery_ShouldReturnRecordsBetweenDatesSpecifiedAndNoMore()
         {
-            DateTime expectedFirstDateTime = new DateTime(2018, 3, 2, 10, 20, 10);
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-            int expectedNumberOfRecords = 104;
-            DateTime expectedEndDateTime = expectedFirstDateTime.Add(
-                TimeSpan.FromSeconds(auditFrequency.TotalSeconds * expectedNumberOfRecords));
+            var expectedFirstDateTime = new DateTime(2018, 3, 2, 10, 20, 10);
+            var auditFrequency = TimeSpan.FromSeconds(3);
+            var expectedNumberOfRecords = 104;
+            var expectedEndDateTime = expectedFirstDateTime.Add(TimeSpan.FromSeconds(auditFrequency.TotalSeconds * expectedNumberOfRecords));
 
-            WriteAuditRecords("AdminUI", "Login", expectedFirstDateTime.Subtract(TimeSpan.FromSeconds(1)),
-                1, auditFrequency);
+            WriteAuditRecords("AdminUI", "Login", expectedFirstDateTime.Subtract(TimeSpan.FromSeconds(1)), 1, auditFrequency);
 
             var expectedRows = WriteAuditRecords("AdminUI", "Login", expectedFirstDateTime, expectedNumberOfRecords, auditFrequency);
             WriteAuditRecords("AdminUI", "Login", expectedEndDateTime.AddSeconds(1), 1, auditFrequency);
 
             var sut = CreateSut();
 
-            var results = sut.Between(expectedFirstDateTime, expectedEndDateTime)
-                .ExecuteAscending()
-                .Result;
+            var results = await sut.Between(expectedFirstDateTime, expectedEndDateTime)
+                .ExecuteAscending();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
@@ -74,14 +54,13 @@ namespace Rsk.Audit.Tests.Integration.EF
 
 
         [Fact]
-        public void GivenAQueryFilteringByResourceIdentifierOrName_ShouldReturnRecordsThatMatchIdentifierInGivenTimeRange()
+        public async Task GivenAQueryFilteringByResourceIdentifierOrName_ShouldReturnRecordsThatMatchIdentifierInGivenTimeRange()
         {
-            string resourceIdentifierToFind = Guid.NewGuid().ToString();
-            DateTime expectedFirstDateTime = new DateTime(2018, 3, 2, 10, 20, 10);
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-            int expectedNumberOfRecords = 104;
-            DateTime expectedEndDateTime = expectedFirstDateTime.Add(
-                TimeSpan.FromSeconds(auditFrequency.TotalSeconds * expectedNumberOfRecords));
+            var resourceIdentifierToFind = Guid.NewGuid().ToString();
+            var expectedFirstDateTime = new DateTime(2018, 3, 2, 10, 20, 10);
+            var auditFrequency = TimeSpan.FromSeconds(3);
+            var expectedNumberOfRecords = 104;
+            var expectedEndDateTime = expectedFirstDateTime.Add(TimeSpan.FromSeconds(auditFrequency.TotalSeconds * expectedNumberOfRecords));
 
             WriteAuditRecords("AdminUI", "Login", expectedFirstDateTime.Subtract(TimeSpan.FromSeconds(1)),
                 1, auditFrequency, resourceIdentifier: resourceIdentifierToFind);
@@ -98,10 +77,9 @@ namespace Rsk.Audit.Tests.Integration.EF
 
             var sut = CreateSut();
 
-            var results = sut.Between(expectedFirstDateTime, expectedEndDateTime)
+            var results = await sut.Between(expectedFirstDateTime, expectedEndDateTime)
                 .AndResource(Matches.Exactly, resourceIdentifierToFind)
-                .ExecuteAscending()
-                .Result;
+                .ExecuteAscending();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
@@ -109,17 +87,16 @@ namespace Rsk.Audit.Tests.Integration.EF
         }
 
         [Fact]
-        public void GivenAQueryForPageTwo_ShouldReturnRecordsBetweenDatesSpecifiedForPageTwoAndNoMore()
+        public async Task GivenAQueryForPageTwo_ShouldReturnRecordsBetweenDatesSpecifiedForPageTwoAndNoMore()
         {
             const int page = 2;
             const int pageSize = 10;
             const int expectedNumberOfPages = 11;
 
-            DateTime expectedFirstDateTime = new DateTime(2018, 3, 2, 10, 20, 10);
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-            int expectedNumberOfRecords = 104;
-            DateTime expectedEndDateTime = expectedFirstDateTime.Add(
-                TimeSpan.FromSeconds(auditFrequency.TotalSeconds * expectedNumberOfRecords));
+            var expectedFirstDateTime = new DateTime(2018, 3, 2, 10, 20, 10);
+            var auditFrequency = TimeSpan.FromSeconds(3);
+            var expectedNumberOfRecords = 104;
+            var expectedEndDateTime = expectedFirstDateTime.Add(TimeSpan.FromSeconds(auditFrequency.TotalSeconds * expectedNumberOfRecords));
 
             WriteAuditRecords("AdminUI", "Login", expectedFirstDateTime.Subtract(TimeSpan.FromSeconds(1)),
                 1, auditFrequency);
@@ -133,9 +110,8 @@ namespace Rsk.Audit.Tests.Integration.EF
 
             var sut = CreateSut();
 
-            var results = sut.Between(expectedFirstDateTime, expectedEndDateTime, page, pageSize)
-                .ExecuteDescending()
-                .Result;
+            var results = await sut.Between(expectedFirstDateTime, expectedEndDateTime, page, pageSize)
+                .ExecuteDescending();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(page, results.Page);
@@ -144,10 +120,9 @@ namespace Rsk.Audit.Tests.Integration.EF
         }
 
         [Fact]
-        public void GivenAQuerySortedBySubject_ShouldReturnRecordsSortedBySubject()
+        public async Task GivenAQuerySortedBySubject_ShouldReturnRecordsSortedBySubject()
         {
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-
+            var auditFrequency = TimeSpan.FromSeconds(3);
             var startTime = DateTime.Now;
 
             var fredRows = WriteAuditRecords("AdminUI", "Login",
@@ -158,14 +133,12 @@ namespace Rsk.Audit.Tests.Integration.EF
                 DateTime.Now,
                 5, auditFrequency, subject: "andy");
 
-            var expectedRows = fredRows.Concat(andyRows).OrderBy(ae => ae.SubjectIdentifier);
+            var expectedRows = fredRows.Concat(andyRows).OrderBy(ae => ae.SubjectIdentifier).ToList();
 
             var sut = CreateSut();
 
-            var results = sut.Between(startTime,
-                    expectedRows.Last().When.ToLocalTime().AddSeconds(3))
-                .ExecuteAscending(AuditQuerySort.Subject)
-                .Result;
+            var results = await sut.Between(startTime, expectedRows.Last().When.ToLocalTime().AddSeconds(3))
+                .ExecuteAscending(AuditQuerySort.Subject);
 
             var expectedNumberOfRecords = expectedRows.Count();
 
@@ -175,10 +148,9 @@ namespace Rsk.Audit.Tests.Integration.EF
         }
 
         [Fact]
-        public void GivenAQueryFilteredByAction_ShouldReturnRecordsMatchingAction()
+        public async Task GivenAQueryFilteredByAction_ShouldReturnRecordsMatchingAction()
         {
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-
+            var auditFrequency = TimeSpan.FromSeconds(3);
             var startTime = DateTime.Now;
 
             var loginRows = WriteAuditRecords("AdminUI", "Login",
@@ -189,28 +161,24 @@ namespace Rsk.Audit.Tests.Integration.EF
                 DateTime.Now,
                 5, auditFrequency, subject: "andy");
 
-            var expectedRows = loginRows;
-
             var sut = CreateSut();
 
-            var results = sut.Between(startTime, expectedRows.Last().When.ToLocalTime().AddSeconds(3))
+            var results = await sut.Between(startTime, loginRows.Last().When.ToLocalTime().AddSeconds(3))
                 .AndAction(Matches.SomethingLike, "Logi")
-                .ExecuteAscending(AuditQuerySort.Subject)
-                .Result;
+                .ExecuteAscending(AuditQuerySort.Subject);
 
-            var expectedNumberOfRecords = expectedRows.Count();
+            var expectedNumberOfRecords = loginRows.Count();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
-            Assert.Equal(expectedRows.ToAuditEntries(), results.Rows);
+            Assert.Equal(loginRows.ToAuditEntries(), results.Rows);
         }
 
 
         [Fact]
-        public void GivenAQueryFilteredByAction_ShouldReturnRecordsMatchingActionsIgnoringCase()
+        public async Task GivenAQueryFilteredByAction_ShouldReturnRecordsMatchingActionsIgnoringCase()
         {
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-
+            var auditFrequency = TimeSpan.FromSeconds(3);
             var startTime = DateTime.Now;
 
             var loginRows = WriteAuditRecords("AdminUI", "Login",
@@ -221,27 +189,23 @@ namespace Rsk.Audit.Tests.Integration.EF
                 DateTime.Now,
                 5, auditFrequency, subject: "andy");
 
-            var expectedRows = loginRows;
-
             var sut = CreateSut();
 
-            var results = sut.Between(startTime, expectedRows.Last().When.ToLocalTime().AddSeconds(3))
+            var results = await sut.Between(startTime, loginRows.Last().When.ToLocalTime().AddSeconds(3))
                 .AndAction(Matches.StartsWith, "logi")
-                .ExecuteAscending(AuditQuerySort.Subject)
-                .Result;
+                .ExecuteAscending(AuditQuerySort.Subject);
 
-            var expectedNumberOfRecords = expectedRows.Count();
+            var expectedNumberOfRecords = loginRows.Count();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
-            Assert.Equal(expectedRows.ToAuditEntries(), results.Rows);
+            Assert.Equal(loginRows.ToAuditEntries(), results.Rows);
         }
 
         [Fact]
-        public void GivenAQueryFilteredBySubject_ShouldReturnRecordsMatchingSubjectIgnoringCase()
+        public async Task GivenAQueryFilteredBySubject_ShouldReturnRecordsMatchingSubjectIgnoringCase()
         {
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-
+            var auditFrequency = TimeSpan.FromSeconds(3);
             var startTime = DateTime.Now;
 
             var loginRows = WriteAuditRecords("AdminUI", "Login",
@@ -252,78 +216,66 @@ namespace Rsk.Audit.Tests.Integration.EF
                 DateTime.Now,
                 5, auditFrequency, subject: "andy");
 
-            var expectedRows = loginRows;
-
             var sut = CreateSut();
 
-            var results = sut.Between(startTime, expectedRows.Last().When.ToLocalTime().AddSeconds(3))
+            var results = await sut.Between(startTime, loginRows.Last().When.ToLocalTime().AddSeconds(3))
                 .AndSubject(Matches.StartsWith, "fred")
-                .ExecuteAscending(AuditQuerySort.Subject)
-                .Result;
+                .ExecuteAscending(AuditQuerySort.Subject);
 
-            var expectedNumberOfRecords = expectedRows.Count();
+            var expectedNumberOfRecords = loginRows.Count();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
-            Assert.Equal(expectedRows.ToAuditEntries(), results.Rows);
+            Assert.Equal(loginRows.ToAuditEntries(), results.Rows);
         }
 
         [Fact]
-        public void GivenAQueryFilteredBySource_ShouldReturnRecordsMatchingSourceIgnoringCase()
+        public async Task GivenAQueryFilteredBySource_ShouldReturnRecordsMatchingSourceIgnoringCase()
         {
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-
+            var auditFrequency = TimeSpan.FromSeconds(3);
             var startTime = DateTime.Now;
 
             var loginRows = WriteAuditRecords("AdminUI", "Login",
                 startTime,
                 5, auditFrequency, subject: "fred");
 
-            var expectedRows = loginRows;
-
             var sut = CreateSut();
 
-            var results = sut.Between(startTime, expectedRows.Last().When.ToLocalTime().AddSeconds(3))
+            var results = await sut.Between(startTime, loginRows.Last().When.ToLocalTime().AddSeconds(3))
                 .AndSource(Matches.StartsWith, "adminui")
-                .ExecuteAscending(AuditQuerySort.Subject)
-                .Result;
+                .ExecuteAscending(AuditQuerySort.Subject);
 
-            var expectedNumberOfRecords = expectedRows.Count();
+            var expectedNumberOfRecords = loginRows.Count();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
-            Assert.Equal(expectedRows.ToAuditEntries(), results.Rows);
+            Assert.Equal(loginRows.ToAuditEntries(), results.Rows);
         }
 
         [Fact]
-        public void GivenAQueryFilteredByResource_ShouldReturnRecordsMatchingResourceIgnoringCase()
+        public async Task GivenAQueryFilteredByResource_ShouldReturnRecordsMatchingResourceIgnoringCase()
         {
-            TimeSpan auditFrequency = TimeSpan.FromSeconds(3);
-
+            var auditFrequency = TimeSpan.FromSeconds(3);
             var startTime = DateTime.Now;
 
             var loginRows = WriteAuditRecords("AdminUI", "Login",
                 startTime,
                 5, auditFrequency, subject: "fred", resource: "admin_ui");
 
-
-            var expectedRows = loginRows;
-
             var sut = CreateSut();
 
-            var results = sut.Between(startTime, expectedRows.Last().When.ToLocalTime().AddSeconds(3))
+            var results = await sut.Between(startTime, loginRows.Last().When.ToLocalTime().AddSeconds(3))
                 .AndResource(Matches.StartsWith, "Admin_UI")
-                .ExecuteAscending(AuditQuerySort.Subject)
-                .Result;
+                .ExecuteAscending(AuditQuerySort.Subject);
 
-            var expectedNumberOfRecords = expectedRows.Count();
+            var expectedNumberOfRecords = loginRows.Count();
 
             Assert.Equal(expectedNumberOfRecords, results.TotalNumberOfRows);
             Assert.Equal(expectedNumberOfRecords, results.Rows.Count());
-            Assert.Equal(expectedRows.ToAuditEntries(), results.Rows);
+            Assert.Equal(loginRows.ToAuditEntries(), results.Rows);
         }
 
-        IQueryableAuditableActions CreateSut()
+        private IQueryableAuditableActions CreateSut()
         {
             return auditProviderFactory.CreateAuditQuery();
         }
@@ -332,7 +284,7 @@ namespace Rsk.Audit.Tests.Integration.EF
             bool success = true, string subject = "andy", string subjectIdentifier = "3232-232198", string description = "",
             string resource = "Some Resource", string resourceType = "client", string resourceIdentifier = "342432-3256-4624")
         {
-            List<AuditEntity> auditEntries = new List<AuditEntity>();
+            var auditEntries = new List<AuditEntity>();
             DateTime when = from;
 
             using (var context = new AuditDatabaseContext(dbContextOptions))
@@ -359,28 +311,12 @@ namespace Rsk.Audit.Tests.Integration.EF
                     when = when.Add(frequency);
                 }
 
-
                 context.AuditEntries.AddRange(auditEntries);
 
                 context.SaveChanges();
             }
 
             return auditEntries;
-        }
-
-        private void ExecuteCommand(string commandString, string connectionString)
-        {
-            using (var conn = new SqlConnection(connectionString))
-            {
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = commandString;
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-
-                    return;
-                }
-            }
         }
     }
 }
