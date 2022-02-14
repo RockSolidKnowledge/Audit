@@ -95,6 +95,6 @@ stages:
       displayName: dotnet build All Tests
       inputs: 
         command: 'test'
-        projects: **/Rsk.Audit.Test.csproj
+        projects: '**/Rsk.Audit.Test.csproj'
         arguments: -c $(buildConfiguration) --no-restore"
   
