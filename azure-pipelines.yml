@@ -66,4 +66,10 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
         feedsToUse: 'config'
-        nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config        
+        nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build **/Rsk.Audit.csproj
+      inputs:
+      command: 'build'
+      projects: '**/Rsk.Audit.csproj'
+      arguments: -c $(buildConfiguration) --no-restore /p:Version="$(packageVersion)"
