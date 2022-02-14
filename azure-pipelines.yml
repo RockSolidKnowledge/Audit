@@ -39,11 +39,11 @@ stages:
         script: |
           mkdir LocalNuget
         workingDirectory: $(Build.SourcesDirectory)
-    - task: PowerShell@2
-      condition: and(succeeded(), eq(variables['shouldPack'], true))
-      displayName: 'Update build date'
-      inputs:
-        filePath: 'setBuildDate.ps1'
+#    - task: PowerShell@2
+#      condition: and(succeeded(), eq(variables['shouldPack'], true))
+#      displayName: 'Update build date'
+#      inputs:
+#        filePath: 'setBuildDate.ps1'
     - task: UseDotNet@2
       displayName: Install .NET Core sdk version 5.x
       inputs:
@@ -72,4 +72,17 @@ stages:
         BuildVersion: $(packageVersion)
       inputs:
         script: echo %Action%%BuildVersion%
+    - task: DotNetCoreCLI@2
+      displayName: 'Dotnet restore'
+      inputs:
+        command: 'restore'
+        projects: >+
+          **/Rsk.Audit.csproj
+  
+          **/Rsk.Audit.Tests.Common.csproj
+  
+          **/Rsk.Audit.Tests.Integration.csproj
+  
+          feedsToUse: 'config'
+          nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config        
  
