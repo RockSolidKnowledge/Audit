@@ -74,10 +74,10 @@ stages:
         projects: '**/Rsk.Audit.csproj'
         arguments: -c $(buildConfiguration) --no-restore /p:Version="$(packageVersion)"
     - task: DotNetCoreCLI@2
-      displayName: dotnet build **/RSK.Audit.EF.csproj
+      displayName: dotnet build **/Rsk.Audit.EF.csproj
       inputs: 
         command: 'build'
-        projects: '**/RSK.Audit.EF.csproj'
+        projects: '**/Rsk.Audit.EF.csproj'
         arguments: -c $(buildConfiguration) --no-restore /p:Version="$(efPackageVersion)"
     - task: DotNetCoreCLI@2
       displayName: dotnet build **/Rsk.DuendeIdentityServer.AuditEventSink.csproj
@@ -91,3 +91,10 @@ stages:
         command: 'build'
         projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
         arguments: -c $(buildConfiguration) --no-restore"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build All Tests
+      inputs: 
+        command: 'build'
+        projects: '**/*tests*.csproj'
+        arguments: -c $(buildConfiguration) --no-restore"
+  
