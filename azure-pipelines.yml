@@ -96,10 +96,15 @@ stages:
       inputs: 
         command: 'build'
         projects: >+
-           **/Rsk.Audit.Test.csproj
-           **/Rsk.Audit.Tests.Common.csproj
-           **/Rsk.Audit.Tests.Integration.csproj
-           **/Rsk.DuendeIdentityServer.AuditEventSink.Tests.csproj
-           **/RSK.IdentityServer4.AuditEventSink.Tests
+          **/Rsk.Audit.Test.csproj
+
+          **/Rsk.Audit.Tests.Common.csproj
+
+          **/Rsk.Audit.Tests.Integration.csproj
+
+          **/Rsk.DuendeIdentityServer.AuditEventSink.Tests.csproj
+
+          **/RSK.IdentityServer4.AuditEventSink.Tests
+           
         arguments: -c $(buildConfiguration) --no-restore"
   
