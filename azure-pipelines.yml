@@ -1,17 +1,75 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
-
+  branches:
+    include:
+    - main
+    - release/*
 variables:
-  buildConfiguration: 'Release'
-
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- name: buildConfiguration
+  value: 'Release'
+- name: packageVersion
+  value: '1.0.0-preview6'
+- name: efPackageVersion
+  value: '1.0.0-preview5'
+- name: identityPackageVersion
+  value: '1.0.0-preview6'
+- name: RunSqlServerTest
+  value: 'true'
+stages:
+- stage: __default
+  jobs:
+  - job: ''
+    strategy:
+      matrix:
+        linux:
+          imageName: 'ubuntu-latest'
+          shouldPack: false
+        mac:
+          imageName: 'macOS-latest'
+          shouldPack: false
+        windows:
+          imageName: 'windows-latest'
+          shouldPack: true
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - task: Bash@3
+      displayName: Create LocalNuget folder
+      inputs:
+        targetType: inline
+        script: |
+          mkdir LocalNuget
+        workingDirectory: $(Build.SourcesDirectory)
+    - task: PowerShell@2
+      condition: and(succeeded(), eq(variables['shouldPack'], true))
+      displayName: 'Update build date'
+      inputs:
+        filePath: 'setBuildDate.ps1'
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 5.x
+      inputs:
+        packageType: sdk
+        version: 5.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 3.1.x
+      inputs:
+        packageType: sdk
+        version: 3.1.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 6.0.x
+      inputs:
+        packageType: sdk
+        version: 6.0.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: NuGetToolInstaller@0
+      inputs:
+        versionSpec: 5.4.0
+    - task: CmdLine@2
+      displayName: 'Set build version'
+      env:
+        Action: '##vso[build.updatebuildnumber]'
+        BuildVersion: $(packageVersion)
+      inputs:
+        script: echo %Action%%BuildVersion%
+ 
