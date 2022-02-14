@@ -23,9 +23,9 @@ stages:
         linux:
           imageName: 'ubuntu-latest'
           shouldPack: false
-        mac:
-          imageName: 'macOS-latest'
-          shouldPack: false
+        #mac:
+        #  imageName: 'macOS-latest'
+        #  shouldPack: false
         windows:
           imageName: 'windows-latest'
           shouldPack: true
@@ -94,17 +94,7 @@ stages:
     - task: DotNetCoreCLI@2
       displayName: dotnet build All Tests
       inputs: 
-        command: 'build'
-        projects: >+
-          **/Rsk.Audit.Test.csproj
-
-          **/Rsk.Audit.Tests.Common.csproj
-
-          **/Rsk.Audit.Tests.Integration.csproj
-
-          **/Rsk.DuendeIdentityServer.AuditEventSink.Tests.csproj
-
-          **/RSK.IdentityServer4.AuditEventSink.Tests
-           
+        command: 'test'
+        projects: **/Rsk.Audit.Test.csproj
         arguments: -c $(buildConfiguration) --no-restore"
   
