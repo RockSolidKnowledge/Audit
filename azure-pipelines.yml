@@ -22,10 +22,10 @@ stages:
       matrix:
         linux:
           imageName: 'ubuntu-latest'
-          shouldPack: false
-        #mac:
-        #  imageName: 'macOS-latest'
-        #  shouldPack: false
+          shouldPack: true
+        mac:
+         imageName: 'macOS-latest'
+         shouldPack: true
         windows:
           imageName: 'windows-latest'
           shouldPack: true
