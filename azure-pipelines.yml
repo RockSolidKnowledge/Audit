@@ -137,4 +137,11 @@ stages:
         Contents: 'LocalNuget/*.nupkg'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
         CleanTargetFolder: true
-        flattenFolders: true           
+        flattenFolders: true
+    - task: PublishBuildArtifacts@1
+      condition: and(succeeded(), eq(variables['shouldPack'], true))
+      displayName: Publish Audit artifacts
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: Audit nupkg
+        publishLocation: 'Container'        
