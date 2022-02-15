@@ -92,9 +92,19 @@ stages:
         projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
         arguments: -c $(buildConfiguration) --no-restore"
     - task: DotNetCoreCLI@2
-      displayName: dotnet Run All Tests
+      displayName: dotnet test - Run All Tests
       inputs: 
         command: 'test'
         projects: '**/*Tests*.csproj'
-        arguments: -c $(buildConfiguration)"
-  
+        arguments: -c $(buildConfiguration) --no-restore"
+    - task: DotNetCoreCLI@2
+      displayName: Package **/Rsk.Audit.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/Rsk.Audit.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: packageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: LocalNuget
