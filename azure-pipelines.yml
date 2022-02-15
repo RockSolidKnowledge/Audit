@@ -108,3 +108,25 @@ stages:
         versioningScheme: 'byEnvVar'
         verbosityPack: 'Normal'
         outputDir: LocalNuget
+    - task: DotNetCoreCLI@2
+      displayName: Package **/Rsk.Audit.EF.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/Rsk.Audit.EF.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: efPackageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: LocalNuget
+    - task: DotNetCoreCLI@2
+      displayName: Package **/Rsk.DuendeIdentityServer.AuditEventSink.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: identityPackageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: LocalNuget        
