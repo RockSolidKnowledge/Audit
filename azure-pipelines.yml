@@ -129,4 +129,12 @@ stages:
         versionEnvVar: identityPackageVersion
         versioningScheme: 'byEnvVar'
         verbosityPack: 'Normal'
-        outputDir: LocalNuget        
+        outputDir: LocalNuget
+    - task: CopyFiles@2
+      condition: and(succeeded(), eq(variables['shouldPack'], true))
+      displayName: 'Copy nupkg to artifact directory'
+      inputs:
+        Contents: 'LocalNuget/*.nupkg'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        CleanTargetFolder: true
+        flattenFolders: true           
