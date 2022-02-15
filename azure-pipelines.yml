@@ -92,9 +92,9 @@ stages:
         projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
         arguments: -c $(buildConfiguration) --no-restore"
     - task: DotNetCoreCLI@2
-      displayName: dotnet build All Tests
+      displayName: dotnet Run All Tests
       inputs: 
         command: 'test'
-        projects: '**/Rsk.Audit.Test.csproj'
-        arguments: -c $(buildConfiguration) --no-restore"
+        projects: '**/*Tests*.csproj'
+        arguments: -c $(buildConfiguration)"
   
