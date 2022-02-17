@@ -1,17 +1,147 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
-
+  branches:
+    include:
+    - main
+    - release/*
 variables:
-  buildConfiguration: 'Release'
-
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- name: buildConfiguration
+  value: 'Release'
+- name: packageVersion
+  value: '2.0.0.0'
+- name: efPackageVersion
+  value: '2.0.0.0'
+- name: identityPackageVersion
+  value: '2.0.0.0'
+- name: RunSqlServerTest
+  value: 'true'
+stages:
+- stage: __default
+  jobs:
+  - job: ''
+    strategy:
+      matrix:
+        linux:
+          imageName: 'ubuntu-latest'
+          shouldPack: true
+        mac:
+         imageName: 'macOS-latest'
+         shouldPack: true
+        windows:
+          imageName: 'windows-latest'
+          shouldPack: true
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - task: Bash@3
+      displayName: Create LocalNuget folder
+      inputs:
+        targetType: inline
+        script: |
+          mkdir LocalNuget
+        workingDirectory: $(Build.SourcesDirectory)
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 5.x
+      inputs:
+        packageType: sdk
+        version: 5.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 3.1.x
+      inputs:
+        packageType: sdk
+        version: 3.1.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 6.0.x
+      inputs:
+        packageType: sdk
+        version: 6.0.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: NuGetToolInstaller@0
+      inputs:
+        versionSpec: 5.4.0
+    - task: DotNetCoreCLI@2
+      displayName: 'Dotnet restore'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'config'
+        nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build **/Rsk.Audit.csproj
+      inputs: 
+        command: 'build'
+        projects: '**/Rsk.Audit.csproj'
+        arguments: -c $(buildConfiguration) --no-restore /p:Version="$(packageVersion)"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build **/Rsk.Audit.EF.csproj
+      inputs: 
+        command: 'build'
+        projects: '**/Rsk.Audit.EF.csproj'
+        arguments: -c $(buildConfiguration) --no-restore /p:Version="$(efPackageVersion)"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build **/Rsk.DuendeIdentityServer.AuditEventSink.csproj
+      inputs: 
+        command: 'build'
+        projects: '**/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
+        arguments: -c $(buildConfiguration) --no-restore /p:Version="$(identityPackageVersion)"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build **/RSK.IdentityServer4.AuditEventSink.csproj
+      inputs: 
+        command: 'build'
+        projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
+        arguments: -c $(buildConfiguration) --no-restore"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet test - Run All Tests
+      inputs: 
+        command: 'test'
+        projects: '**/*Tests*.csproj'
+        arguments: -c $(buildConfiguration) --no-restore"
+    - task: DotNetCoreCLI@2
+      displayName: Package **/Rsk.Audit.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/Rsk.Audit.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: packageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: LocalNuget
+    - task: DotNetCoreCLI@2
+      displayName: Package **/Rsk.Audit.EF.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/Rsk.Audit.EF.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: efPackageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: LocalNuget
+    - task: DotNetCoreCLI@2
+      displayName: Package **/Rsk.DuendeIdentityServer.AuditEventSink.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: identityPackageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: LocalNuget
+    - task: CopyFiles@2
+      condition: and(succeeded(), eq(variables['shouldPack'], true))
+      displayName: 'Copy nupkg to artifact directory'
+      inputs:
+        Contents: 'LocalNuget/*.nupkg'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        CleanTargetFolder: true
+        flattenFolders: true
+    - task: PublishBuildArtifacts@1
+      condition: and(succeeded(), eq(variables['shouldPack'], true))
+      displayName: Publish Audit artifacts
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: Audit nupkg
+        publishLocation: 'Container'        
