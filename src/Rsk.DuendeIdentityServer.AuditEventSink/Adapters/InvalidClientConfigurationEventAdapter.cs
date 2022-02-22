@@ -1,14 +1,14 @@
 ﻿using System;
-using IdentityServer4.Events;
+using Duende.IdentityServer.Events;
 using RSK.Audit;
 
-namespace RSK.IdentityServer4.AuditEventSink.Adapters
+namespace Rsk.DuendeIdentityServer.AuditEventSink.Adapters
 {
-    public class DeviceAuthorizationSuccessEventAdapter : IAuditEventArguments
+    public class InvalidClientConfigurationEventAdapter : IAuditEventArguments
     {
-        private readonly DeviceAuthorizationSuccessEvent evt;
+        private readonly InvalidClientConfigurationEvent evt;
 
-        public DeviceAuthorizationSuccessEventAdapter(DeviceAuthorizationSuccessEvent evt)
+        public InvalidClientConfigurationEventAdapter(InvalidClientConfigurationEvent evt)
         {
             this.evt = evt ?? throw new ArgumentNullException(nameof(evt));
         }

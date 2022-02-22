@@ -28,6 +28,28 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink
                         return new TokenIssuedFailureEventAdapter(tokenIssuedFailure);
                     case GrantsRevokedEvent grantsRevoked:
                         return new GrantsRevokedEventAdapter(grantsRevoked);
+                    case DeviceAuthorizationFailureEvent deviceAuthorizationFailureEvent:
+                        return new DeviceAuthorizationFailureEventAdapter(deviceAuthorizationFailureEvent);
+                    case DeviceAuthorizationSuccessEvent deviceAuthorizationSuccessEvent:
+                        return new DeviceAuthorizationSuccessEventAdapter(deviceAuthorizationSuccessEvent);
+                    case TokenRevokedSuccessEvent tokenRevokedSuccessEvent:
+                        return new TokenRevokedSuccessEventAdapter(tokenRevokedSuccessEvent);
+                    case InvalidClientConfigurationEvent invalidClientConfiguration:
+                        return new InvalidClientConfigurationEventAdapter(invalidClientConfiguration);
+                    case TokenIntrospectionFailureEvent tokenIntrospectionFailureEvent:
+                        return new TokenIntrospectionFailureEventAdapter(tokenIntrospectionFailureEvent);
+                    case TokenIntrospectionSuccessEvent tokenIntrospectionSuccessEvent:
+                        return new TokenIntrospectionSuccessEventAdapter(tokenIntrospectionSuccessEvent);
+                    case ClientAuthenticationFailureEvent clientAuthenticationFailureEvent:
+                        return new ClientAuthenticationFailureEventAdapter(clientAuthenticationFailureEvent);
+                    case ClientAuthenticationSuccessEvent clientAuthenticationSuccessEvent:
+                        return new ClientAuthenticationSuccessEventAdapter(clientAuthenticationSuccessEvent);
+                    case ApiAuthenticationFailureEvent apiAuthenticationFailureEvent:
+                        return new ApiAuthenticationFailureEventAdapter(apiAuthenticationFailureEvent);
+                    case ApiAuthenticationSuccessEvent apiAuthenticationSuccessEvent:
+                        return new ApiAuthenticationSuccessEventAdapter(apiAuthenticationSuccessEvent);
+                    case UnhandledExceptionEvent unhandledExceptionEvent:
+                        return new UnhandledExceptionEventAdapter(unhandledExceptionEvent);
                 }
             }
 
