@@ -317,5 +317,50 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink.Tests
             // Assert
             Assert.IsType<UnhandledExceptionEventAdapter>(adapter);
         }
+
+        [Fact]
+        public void Create_WhenBackchannelAuthenticationSuccessEvent_WillReturnBackchannelAuthenticationSuccessEventAdapter()
+        {
+            // Arrange
+            var evt = new BackchannelAuthenticationSuccessEvent(new BackchannelAuthenticationRequestValidationResult(new ValidatedBackchannelAuthenticationRequest{Client = new Client()}));
+
+            var sut = new AdapterFactory();
+
+            // Act
+            var adapter = sut.Create(evt);
+
+            // Assert
+            Assert.IsType<BackchannelAuthenticationSuccessEventAdapter>(adapter);
+        }
+
+        [Fact]
+        public void Create_WhenBackchannelAuthenticationFailureEvent_WillReturnBackchannelAuthenticationFailureEventAdapter()
+        {
+            // Arrange
+            var evt = new BackchannelAuthenticationFailureEvent(new BackchannelAuthenticationRequestValidationResult(new ValidatedBackchannelAuthenticationRequest { Client = new Client() }));
+
+            var sut = new AdapterFactory();
+
+            // Act
+            var adapter = sut.Create(evt);
+
+            // Assert
+            Assert.IsType<BackchannelAuthenticationFailureEventAdapter>(adapter);
+        }
+
+        [Fact]
+        public void Create_WhenInvalidIdentityProviderConfigurationEvent_WillReturnInvalidIdentityProviderConfigurationAdapter()
+        {
+            // Arrange
+            var evt = new InvalidIdentityProviderConfiguration(new IdentityProvider("a"), "err");
+
+            var sut = new AdapterFactory();
+
+            // Act
+            var adapter = sut.Create(evt);
+
+            // Assert
+            Assert.IsType<InvalidIdentityProviderConfigurationAdapter>(adapter);
+        }
     }
 }
