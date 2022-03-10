@@ -8,7 +8,7 @@
     <Description>Provides audting API to record audit records and query api to find audit records</Description>
     <PackageProjectUrl>https://www.identityserver.com/products/adminui</PackageProjectUrl>
     <PackageReleaseNotes>https://www.identityserver.com/downloads/adminui</PackageReleaseNotes>
-    <Copyright>Copyright 2021 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
+    <Copyright>Copyright 2022 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
     <PackageTags>Audit AdminUI IdentityServer</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
