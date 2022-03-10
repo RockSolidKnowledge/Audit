@@ -13,9 +13,9 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink.Adapters
             this.evt = evt ?? throw new ArgumentNullException(nameof(evt));
         }
 
-        public ResourceActor Actor => new ResourceActor(ResourceActor.UserSubjectType, evt.ActivityId, evt.ApiName);
+        public ResourceActor Actor => new ResourceActor(ResourceActor.MachineSubjectType, null, null);
         public string Action => evt.Name;
-        public AuditableResource Resource => new AuditableResource("IdentityServer", evt.ActivityId);
+        public AuditableResource Resource => new AuditableResource("IdentityServer", evt.ApiName);
         public FormattedString Description => evt.ToString().SafeForFormatted();
     }
 }
