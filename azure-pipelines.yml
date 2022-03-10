@@ -11,7 +11,7 @@ variables:
 - name: efPackageVersion
   value: '2.0.0.0'
 - name: identityPackageVersion
-  value: '2.0.0.0'
+  value: '3.0.0.0'
 - name: RunSqlServerTest
   value: 'true'
 stages:
