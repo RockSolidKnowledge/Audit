@@ -14,11 +14,8 @@ namespace RSK.IdentityServer4.AuditEventSink.Adapters
         }
 
         public ResourceActor Actor => new ResourceActor(ResourceActor.UserSubjectType, evt.SubjectId, evt.DisplayName);
-
         public string Action => evt.Name;
-
         public AuditableResource Resource => new AuditableResource("IdentityServer", evt.Endpoint);
-
         public FormattedString Description => evt.ToString().SafeForFormatted();
     }
 }
