@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <Authors>Rock Solid Knowledge Ltd</Authors>
     <Description>IdentityServer4 event sink to add audit records into AdminUI auditing</Description>
     <PackageProjectUrl>https://github.com/RockSolidKnowledge/RSK.IdentityServer4.AuditEventSink</PackageProjectUrl>

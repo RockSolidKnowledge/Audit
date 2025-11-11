@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <Authors>Rock Solid Knowledge Ltd</Authors>
         <Description>Duende IdentityServer event sink to add audit records into AdminUI auditing</Description>
         <PackageProjectUrl>https://github.com/RockSolidKnowledge/RSK.IdentityServer4.AuditEventSink</PackageProjectUrl>
