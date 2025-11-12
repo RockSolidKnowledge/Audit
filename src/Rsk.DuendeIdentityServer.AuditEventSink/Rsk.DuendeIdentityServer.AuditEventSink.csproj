@@ -5,7 +5,7 @@
         <Authors>Rock Solid Knowledge Ltd</Authors>
         <Description>Duende IdentityServer event sink to add audit records into AdminUI auditing</Description>
         <PackageProjectUrl>https://github.com/RockSolidKnowledge/RSK.IdentityServer4.AuditEventSink</PackageProjectUrl>
-        <PackageReleaseNotes>Initial Duende IdentityServer release.</PackageReleaseNotes>
+        <PackageReleaseNotes>Upgrade to .NET 10</PackageReleaseNotes>
         <Copyright>Copyright 2022 (c) Rock Solid Knowledge Ltd. All rights reserved</Copyright>
         <PackageTags>Audit AdminUI IdentityServer Events</PackageTags>
         <IncludeSymbols>true</IncludeSymbols>
