@@ -85,12 +85,12 @@ stages:
         command: 'build'
         projects: '**/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
         arguments: -c $(buildConfiguration) --no-restore /p:Version="$(identityPackageVersion)"
-    # - task: DotNetCoreCLI@2
-    #   displayName: dotnet build **/RSK.IdentityServer4.AuditEventSink.csproj
-    #   inputs: 
-    #     command: 'build'
-    #     projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
-    #     arguments: -c $(buildConfiguration) --no-restore"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build **/RSK.IdentityServer4.AuditEventSink.csproj
+      inputs: 
+        command: 'build'
+        projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
+        arguments: -c $(buildConfiguration) --no-restore"
     - task: DotNetCoreCLI@2
       displayName: dotnet test - Run All Tests
       inputs: 
