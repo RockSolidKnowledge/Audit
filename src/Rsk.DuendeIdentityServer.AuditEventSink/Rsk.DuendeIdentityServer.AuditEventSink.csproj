@@ -16,7 +16,7 @@
 
     <ItemGroup>
 	    <PackageReference Include="Duende.IdentityServer" Version="6.0.0" />
-        <ProjectReference Include="..\Rsk.Audit\Rsk.Audit.csproj" />
+        <PackageReference Include="Rsk.Audit" Version="3.0.0" />
     </ItemGroup>
 
 	<ItemGroup>
