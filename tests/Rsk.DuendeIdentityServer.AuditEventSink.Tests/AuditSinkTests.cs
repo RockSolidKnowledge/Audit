@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Duende.IdentityServer.Events;
 using Moq;
 using RSK.Audit;
@@ -88,9 +90,37 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink.Tests
             recorder.Verify(x => x.RecordFailure(It.IsAny<IAuditEventArguments>()), Times.Once);
         }
 
+        [Fact]
+        public async Task PersistAsync_WhenCustomMappingIsProvided_WillUseCustomAdapter()
+        {
+            // Arrange
+            var recorder = new Mock<IRecordAuditableActions>();
+            var customAuditEventArguments = new Mock<IAuditEventArguments>().Object;
+            var customMappings = new Dictionary<Type, Func<Event, IAuditEventArguments>>
+            {
+                [typeof(CustomStubEvent)] = _ => customAuditEventArguments
+            };
+
+            var sut = new AuditSink(recorder.Object, customMappings);
+            var evt = new CustomStubEvent(string.Empty, string.Empty, EventTypes.Success, -1);
+
+            // Act
+            await sut.PersistAsync(evt);
+
+            // Assert
+            recorder.Verify(x => x.RecordSuccess(customAuditEventArguments), Times.Once);
+        }
+
         private class StubEvent : Event
         {
             public StubEvent(string category, string name, EventTypes type, int id, string message = null) : base(category, name, type, id, message)
+            {
+            }
+        }
+
+        private class CustomStubEvent : Event
+        {
+            public CustomStubEvent(string category, string name, EventTypes type, int id, string message = null) : base(category, name, type, id, message)
             {
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Duende.IdentityServer.Events;
@@ -7,34 +8,31 @@ using RSK.Audit;
 
 [assembly:InternalsVisibleTo("RSK.DuendeIdentityServer.AuditEventSink.Tests")]
 
-namespace Rsk.DuendeIdentityServer.AuditEventSink
+namespace Rsk.DuendeIdentityServer.AuditEventSink;
+
+public class AuditSink(
+    IRecordAuditableActions auditRecorder,
+    IDictionary<Type, Func<Event, IAuditEventArguments>> customEventAdapters = null)
+    : IEventSink
 {
-    public class AuditSink : IEventSink
+    private readonly IRecordAuditableActions auditRecorder = auditRecorder ?? throw new ArgumentNullException();
+
+    internal IAdapterFactory Factory { get; init; } = new AdapterFactory(customEventAdapters);
+
+    public Task PersistAsync(Event evt)
     {
-        private readonly IRecordAuditableActions auditRecorder;
+        var auditArgument = Factory.Create(evt);
 
-        internal IAdapterFactory Factory { get; set; } = new AdapterFactory();
-
-        public AuditSink(IRecordAuditableActions auditRecorder)
+        if (auditArgument != null)
         {
-            this.auditRecorder = auditRecorder ?? throw new ArgumentNullException();
-        }
-
-        public Task PersistAsync(Event evt)
-        {
-            var auditArgument = Factory.Create(evt);
-
-            if (auditArgument != null)
+            if (evt.EventType == EventTypes.Success || evt.EventType == EventTypes.Information)
             {
-                if (evt.EventType == EventTypes.Success || evt.EventType == EventTypes.Information)
-                {
-                    return auditRecorder.RecordSuccess(auditArgument);
-                }
-
-                return auditRecorder.RecordFailure(auditArgument);
+                return auditRecorder.RecordSuccess(auditArgument);
             }
 
-            return Task.CompletedTask;
+            return auditRecorder.RecordFailure(auditArgument);
         }
+
+        return Task.CompletedTask;
     }
 }

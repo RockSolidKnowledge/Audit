@@ -1,4 +1,6 @@
-﻿using Duende.IdentityServer.Events;
+﻿using System;
+using System.Collections.Generic;
+using Duende.IdentityServer.Events;
 using RSK.Audit;
 using Rsk.DuendeIdentityServer.AuditEventSink.Adapters;
 
@@ -6,60 +8,59 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink
 {
     public class AdapterFactory : IAdapterFactory
     {
+        private readonly Dictionary<Type, Func<Event, IAuditEventArguments>> eventAdapters;
+
+        public AdapterFactory(IDictionary<Type, Func<Event, IAuditEventArguments>> customEventAdapters = null)
+        {
+            eventAdapters = CreateDefaultEventAdapters();
+
+            if (customEventAdapters == null) return;
+
+            foreach (var mapping in customEventAdapters)
+            {
+                eventAdapters[mapping.Key] = mapping.Value;
+            }
+        }
+
         public IAuditEventArguments Create(Event evt)
         {
-            if (evt != null)
+            if (evt == null)
             {
-                switch (evt)
-                {
-                    case TokenIssuedSuccessEvent e:
-                        return new TokenIssuedSuccessEventAdapter(e);
-                    case UserLoginSuccessEvent e:
-                        return new UserLoginSuccessEventAdapter(e);
-                    case UserLoginFailureEvent e:
-                        return new UserLoginFailureEventAdapter(e);
-                    case UserLogoutSuccessEvent e:
-                        return new UserLogoutSuccessEventAdapter(e);
-                    case ConsentGrantedEvent e:
-                        return new ConsentGrantedEventAdapter(e);
-                    case ConsentDeniedEvent e:
-                        return new ConsentDeniedEventAdapter(e);
-                    case TokenIssuedFailureEvent e:
-                        return new TokenIssuedFailureEventAdapter(e);
-                    case GrantsRevokedEvent e:
-                        return new GrantsRevokedEventAdapter(e);
-                    case DeviceAuthorizationFailureEvent e:
-                        return new DeviceAuthorizationFailureEventAdapter(e);
-                    case DeviceAuthorizationSuccessEvent e:
-                        return new DeviceAuthorizationSuccessEventAdapter(e);
-                    case TokenRevokedSuccessEvent e:
-                        return new TokenRevokedSuccessEventAdapter(e);
-                    case InvalidClientConfigurationEvent e:
-                        return new InvalidClientConfigurationEventAdapter(e);
-                    case TokenIntrospectionFailureEvent e:
-                        return new TokenIntrospectionFailureEventAdapter(e);
-                    case TokenIntrospectionSuccessEvent e:
-                        return new TokenIntrospectionSuccessEventAdapter(e);
-                    case ClientAuthenticationFailureEvent e:
-                        return new ClientAuthenticationFailureEventAdapter(e);
-                    case ClientAuthenticationSuccessEvent e:
-                        return new ClientAuthenticationSuccessEventAdapter(e);
-                    case ApiAuthenticationFailureEvent e:
-                        return new ApiAuthenticationFailureEventAdapter(e);
-                    case ApiAuthenticationSuccessEvent e:
-                        return new ApiAuthenticationSuccessEventAdapter(e);
-                    case UnhandledExceptionEvent e:
-                        return new UnhandledExceptionEventAdapter(e);
-                    case BackchannelAuthenticationSuccessEvent e:
-                        return new BackchannelAuthenticationSuccessEventAdapter(e);
-                    case BackchannelAuthenticationFailureEvent e:
-                              return new BackchannelAuthenticationFailureEventAdapter(e);
-                    case InvalidIdentityProviderConfiguration e:
-                        return new InvalidIdentityProviderConfigurationAdapter(e);
-                }
+                return null;
             }
 
-            return null;
+            return eventAdapters.TryGetValue(evt.GetType(), out var adapterFactory)
+                ? adapterFactory(evt)
+                : null;
+        }
+
+        private static Dictionary<Type, Func<Event, IAuditEventArguments>> CreateDefaultEventAdapters()
+        {
+            return new Dictionary<Type, Func<Event, IAuditEventArguments>>
+            {
+                [typeof(TokenIssuedSuccessEvent)] = e => new TokenIssuedSuccessEventAdapter((TokenIssuedSuccessEvent)e),
+                [typeof(UserLoginSuccessEvent)] = e => new UserLoginSuccessEventAdapter((UserLoginSuccessEvent)e),
+                [typeof(UserLoginFailureEvent)] = e => new UserLoginFailureEventAdapter((UserLoginFailureEvent)e),
+                [typeof(UserLogoutSuccessEvent)] = e => new UserLogoutSuccessEventAdapter((UserLogoutSuccessEvent)e),
+                [typeof(ConsentGrantedEvent)] = e => new ConsentGrantedEventAdapter((ConsentGrantedEvent)e),
+                [typeof(ConsentDeniedEvent)] = e => new ConsentDeniedEventAdapter((ConsentDeniedEvent)e),
+                [typeof(TokenIssuedFailureEvent)] = e => new TokenIssuedFailureEventAdapter((TokenIssuedFailureEvent)e),
+                [typeof(GrantsRevokedEvent)] = e => new GrantsRevokedEventAdapter((GrantsRevokedEvent)e),
+                [typeof(DeviceAuthorizationFailureEvent)] = e => new DeviceAuthorizationFailureEventAdapter((DeviceAuthorizationFailureEvent)e),
+                [typeof(DeviceAuthorizationSuccessEvent)] = e => new DeviceAuthorizationSuccessEventAdapter((DeviceAuthorizationSuccessEvent)e),
+                [typeof(TokenRevokedSuccessEvent)] = e => new TokenRevokedSuccessEventAdapter((TokenRevokedSuccessEvent)e),
+                [typeof(InvalidClientConfigurationEvent)] = e => new InvalidClientConfigurationEventAdapter((InvalidClientConfigurationEvent)e),
+                [typeof(TokenIntrospectionFailureEvent)] = e => new TokenIntrospectionFailureEventAdapter((TokenIntrospectionFailureEvent)e),
+                [typeof(TokenIntrospectionSuccessEvent)] = e => new TokenIntrospectionSuccessEventAdapter((TokenIntrospectionSuccessEvent)e),
+                [typeof(ClientAuthenticationFailureEvent)] = e => new ClientAuthenticationFailureEventAdapter((ClientAuthenticationFailureEvent)e),
+                [typeof(ClientAuthenticationSuccessEvent)] = e => new ClientAuthenticationSuccessEventAdapter((ClientAuthenticationSuccessEvent)e),
+                [typeof(ApiAuthenticationFailureEvent)] = e => new ApiAuthenticationFailureEventAdapter((ApiAuthenticationFailureEvent)e),
+                [typeof(ApiAuthenticationSuccessEvent)] = e => new ApiAuthenticationSuccessEventAdapter((ApiAuthenticationSuccessEvent)e),
+                [typeof(UnhandledExceptionEvent)] = e => new UnhandledExceptionEventAdapter((UnhandledExceptionEvent)e),
+                [typeof(BackchannelAuthenticationSuccessEvent)] = e => new BackchannelAuthenticationSuccessEventAdapter((BackchannelAuthenticationSuccessEvent)e),
+                [typeof(BackchannelAuthenticationFailureEvent)] = e => new BackchannelAuthenticationFailureEventAdapter((BackchannelAuthenticationFailureEvent)e),
+                [typeof(InvalidIdentityProviderConfiguration)] = e => new InvalidIdentityProviderConfigurationAdapter((InvalidIdentityProviderConfiguration)e)
+            };
         }
     }
 }
