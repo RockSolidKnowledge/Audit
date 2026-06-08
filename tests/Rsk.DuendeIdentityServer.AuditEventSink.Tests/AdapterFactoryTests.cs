@@ -4,7 +4,7 @@ using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.ResponseHandling;
 using Duende.IdentityServer.Validation;
-using IdentityModel;
+using Duende.IdentityModel;
 using Rsk.DuendeIdentityServer.AuditEventSink.Adapters;
 using Xunit;
 
