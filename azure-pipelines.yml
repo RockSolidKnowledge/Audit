@@ -40,18 +40,6 @@ stages:
           mkdir LocalNuget
         workingDirectory: $(Build.SourcesDirectory)
     - task: UseDotNet@2
-      displayName: Install .NET Core sdk version 8.x
-      inputs:
-        packageType: sdk
-        version: 8.x
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-    - task: UseDotNet@2
-      displayName: Install .NET Core sdk version 9.x
-      inputs:
-        packageType: sdk
-        version: 9.x
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-    - task: UseDotNet@2
       displayName: Install .NET Core sdk version 10.x
       inputs:
         packageType: sdk
