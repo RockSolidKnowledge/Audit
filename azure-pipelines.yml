@@ -7,11 +7,11 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 - name: packageVersion
-  value: '3.0.0.0'
+  value: '4.0.0.0'
 - name: efPackageVersion
-  value: '3.0.0.0'
+  value: '4.0.0.0'
 - name: identityPackageVersion
-  value: '4.1.0.0'
+  value: '5.0.0.0'
 - name: RunSqlServerTest
   value: 'true'
 stages:
@@ -39,18 +39,6 @@ stages:
         script: |
           mkdir LocalNuget
         workingDirectory: $(Build.SourcesDirectory)
-    - task: UseDotNet@2
-      displayName: Install .NET Core sdk version 8.x
-      inputs:
-        packageType: sdk
-        version: 8.x
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-    - task: UseDotNet@2
-      displayName: Install .NET Core sdk version 9.x
-      inputs:
-        packageType: sdk
-        version: 9.x
-        installationPath: $(Agent.ToolsDirectory)/dotnet
     - task: UseDotNet@2
       displayName: Install .NET Core sdk version 10.x
       inputs:

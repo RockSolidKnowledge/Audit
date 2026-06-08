@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageId>RSK.Audit</PackageId>
     <Authors>Rock Solid Knowledge Ltd</Authors>
     <Product>RSK.Audit</Product>
@@ -15,24 +15,16 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RootNamespace>RSK.Audit</RootNamespace>
-    <Version>3.0.0</Version>
+    <Version>4.0.0</Version>
   </PropertyGroup>
 
   <!--don't warn about missing comments-->
   <PropertyGroup>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.22" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.11" />
-  </ItemGroup>
     
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-	<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.0" />
+  <ItemGroup>
+	<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.8" />
   </ItemGroup>
   
   <ItemGroup>
