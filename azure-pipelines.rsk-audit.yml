@@ -22,13 +22,6 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - task: Bash@3
-      displayName: Create LocalNuget folder
-      inputs:
-        targetType: inline
-        script: |
-          mkdir LocalNuget
-        workingDirectory: $(Build.SourcesDirectory)
     - task: UseDotNet@2
       displayName: Install .NET Core sdk version 10.x
       inputs:
@@ -67,15 +60,7 @@ stages:
         versionEnvVar: packageVersion
         versioningScheme: 'byEnvVar'
         verbosityPack: 'Normal'
-        outputDir: LocalNuget
-    - task: CopyFiles@2
-      condition: and(succeeded(), eq(variables['shouldPack'], true))
-      displayName: 'Copy nupkg to artifact directory'
-      inputs:
-        Contents: 'LocalNuget/*.nupkg'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-        CleanTargetFolder: true
-        flattenFolders: true
+        outputDir: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       condition: and(succeeded(), eq(variables['shouldPack'], true))
       displayName: Publish Rsk.Audit artifacts
