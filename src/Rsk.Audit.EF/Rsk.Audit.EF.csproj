@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageId>RSK.Audit.EF</PackageId>
     <Authors>Rock Solid Knowledge Ltd</Authors>
     <Description>Provides audting API to record audit records and query api to find audit records with EntityFramework Core</Description>
-    <PackageProjectUrl>https://www.identityserver.com/products/adminui</PackageProjectUrl>
-    <PackageReleaseNotes>https://www.identityserver.com/downloads/adminui</PackageReleaseNotes>
-    <Copyright>Copyright 2022 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/RockSolidKnowledge/Audit</PackageProjectUrl>
+    <Copyright>Copyright 2026 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
     <PackageTags>Audit AdminUI IdentityServer EntityFramework</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
