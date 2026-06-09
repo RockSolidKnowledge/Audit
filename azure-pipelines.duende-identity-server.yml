@@ -37,6 +37,7 @@ stages:
         command: 'restore'
         projects: 'src/Rsk.DuendeIdentityServer.AuditEventSink/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
         feedsToUse: 'config'
+        nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config
     - task: DotNetCoreCLI@2
       displayName: dotnet build src/Rsk.DuendeIdentityServer.AuditEventSink/Rsk.DuendeIdentityServer.AuditEventSink.csproj
       inputs: 
