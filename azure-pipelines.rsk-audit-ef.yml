@@ -68,16 +68,18 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'Rsk.Audit.EF nupkg'
         publishLocation: 'Container'
-
+        
 - stage: Publish
   dependsOn: Build
   condition: succeeded()
   jobs:
-  - job: PublishNuGet
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - template: templates/publish-nuget.yml
-      parameters:
-        artifact: 'Rsk.Audit.EF nupkg'
-        packageToPublish: '$(Pipeline.Workspace)/Rsk.Audit.EF nupkg/*.nupkg'
+  - deployment: PublishNuGet
+    environment: Release
+    strategy:
+        runOnce:
+          deploy:
+            steps:
+              - template: templates/publish-nuget.yml
+                parameters:
+                  artifact: 'Rsk.Audit.EF nupkg'
+                  packageToPublish: '$(Pipeline.Workspace)/Rsk.Audit nupkg/*.nupkg'
