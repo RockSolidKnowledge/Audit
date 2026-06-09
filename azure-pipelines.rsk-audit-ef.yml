@@ -68,7 +68,7 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'Rsk.Audit.EF nupkg'
         publishLocation: 'Container'
-        
+
 - stage: Publish
   dependsOn: Build
   condition: succeeded()
