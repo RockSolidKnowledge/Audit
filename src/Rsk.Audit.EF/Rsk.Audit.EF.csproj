@@ -1,20 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageId>RSK.Audit.EF</PackageId>
     <Authors>Rock Solid Knowledge Ltd</Authors>
     <Description>Provides audting API to record audit records and query api to find audit records with EntityFramework Core</Description>
-    <PackageProjectUrl>https://www.identityserver.com/products/adminui</PackageProjectUrl>
-    <PackageReleaseNotes>https://www.identityserver.com/downloads/adminui</PackageReleaseNotes>
-    <Copyright>Copyright 2022 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/RockSolidKnowledge/Audit</PackageProjectUrl>
+    <Copyright>Copyright 2026 (c) Rock Solid Knowledge Ltd. All rights reserved.</Copyright>
     <PackageTags>Audit AdminUI IdentityServer EntityFramework</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RootNamespace>RSK.Audit.EF</RootNamespace>
-    <Version>3.0.0</Version>
+    <Version>4.0.0</Version>
   </PropertyGroup>
 
   <!--don't warn about missing comments-->
@@ -22,16 +21,8 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+  <ItemGroup>
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,83 @@
+variables:
+- name: buildConfiguration
+  value: 'Release'
+- name: packageVersion
+  value: '4.0.0.0'
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildRskAudit
+    strategy:
+      matrix:
+        linux:
+          imageName: 'ubuntu-latest'
+          shouldPack: true
+        mac:
+         imageName: 'macOS-latest'
+         shouldPack: true
+        windows:
+          imageName: 'windows-latest'
+          shouldPack: true
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - task: UseDotNet@2
+      displayName: Install .NET Core sdk version 10.x
+      inputs:
+        packageType: sdk
+        version: 10.x
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+    - task: NuGetToolInstaller@0
+      inputs:
+        versionSpec: 5.4.0
+    - task: DotNetCoreCLI@2
+      displayName: 'Dotnet restore'
+      inputs:
+        command: 'restore'
+        projects: 'src/Rsk.Audit/Rsk.Audit.csproj'
+        feedsToUse: 'config'
+        nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config
+    - task: DotNetCoreCLI@2
+      displayName: dotnet build src/Rsk.Audit/Rsk.Audit.csproj
+      inputs: 
+        command: 'build'
+        projects: 'src/Rsk.Audit/Rsk.Audit.csproj'
+        arguments: -c $(buildConfiguration) --no-restore /p:Version="$(packageVersion)"
+    - task: DotNetCoreCLI@2
+      displayName: dotnet test - Run Rsk.Audit Tests
+      inputs: 
+        command: 'test'
+        projects: 'tests/Rsk.Audit.Tests/Rsk.Audit.Tests.csproj'
+        arguments: -c $(buildConfiguration) --no-restore
+    - task: DotNetCoreCLI@2
+      displayName: Package Rsk.Audit.csproj for Nuget
+      inputs:
+        command: 'pack'
+        packagesToPack: 'src/Rsk.Audit/Rsk.Audit.csproj'
+        nobuild: true
+        includesymbols: true
+        versionEnvVar: packageVersion
+        versioningScheme: 'byEnvVar'
+        verbosityPack: 'Normal'
+        outputDir: '$(Build.ArtifactStagingDirectory)'
+    - task: PublishBuildArtifacts@1
+      condition: and(succeeded(), eq(variables['shouldPack'], true))
+      displayName: Publish Rsk.Audit artifacts
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'Rsk.Audit nupkg'
+        publishLocation: 'Container'
+
+- stage: Publish
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - job: PublishNuGet
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: templates/publish-nuget.yml
+      parameters:
+        artifact: 'Rsk.Audit nupkg'
+        packageToPublish: '$(Pipeline.Workspace)/Rsk.Audit nupkg/*.nupkg'
