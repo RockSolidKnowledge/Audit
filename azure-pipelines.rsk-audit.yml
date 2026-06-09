@@ -73,11 +73,13 @@ stages:
   dependsOn: Build
   condition: succeeded()
   jobs:
-  - job: PublishNuGet
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - template: templates/publish-nuget.yml
-      parameters:
-        artifact: 'Rsk.Audit nupkg'
-        packageToPublish: '$(Pipeline.Workspace)/Rsk.Audit nupkg/*.nupkg'
+  - deployment: PublishNuGet
+    environment: Release
+    strategy:
+        runOnce:
+          deploy:
+            steps:
+              - template: templates/publish-nuget.yml
+                parameters:
+                  artifact: 'Rsk.Audit nupkg'
+                  packageToPublish: '$(Pipeline.Workspace)/Rsk.Audit nupkg/*.nupkg'
