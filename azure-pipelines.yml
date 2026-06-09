@@ -43,7 +43,6 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
         feedsToUse: 'config'
-        nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config
     - task: DotNetCoreCLI@2
       displayName: dotnet build Rsk.Audit.csproj
       inputs: 
