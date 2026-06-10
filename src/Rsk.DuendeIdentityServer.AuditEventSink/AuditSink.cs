@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
@@ -19,7 +20,7 @@ public class AuditSink(
 
     internal IAdapterFactory Factory { get; init; } = new AdapterFactory(customEventAdapters);
 
-    public Task PersistAsync(Event evt)
+    public Task PersistAsync(Event evt, CancellationToken cancellationToken = default)
     {
         var auditArgument = Factory.Create(evt);
 

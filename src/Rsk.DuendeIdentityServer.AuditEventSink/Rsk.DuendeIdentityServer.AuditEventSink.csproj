@@ -14,8 +14,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-	    <PackageReference Include="Duende.IdentityServer" Version="7.4.7" />
-        <PackageReference Include="Rsk.Audit" Version="4.0.0" />
+	    <PackageReference Include="Duende.IdentityServer" Version="8.0.0" />
+        
+        <!--TODO: update to v4.0.0 when released-->
+        <PackageReference Include="Rsk.Audit" Version="3.0.0" />
     </ItemGroup>
 
 	<ItemGroup>
