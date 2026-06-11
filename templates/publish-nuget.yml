@@ -1,0 +1,34 @@
+parameters:
+  - name: toLive
+    type: boolean
+    default: false
+  - name: artifact
+    type: string
+    default: 'Nupkg'
+  - name: packageToPublish
+    type: string
+
+steps:
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '10.0.x'
+
+  - download: current
+    displayName: 'Download NuGet Artifact'
+    artifact: '${{ parameters.artifact }}'
+
+  - ${{ if eq(parameters.toLive, true) }}:
+      - bash: |
+          dotnet nuget push ${{ parameters.packageToPublish }} --source https://api.nuget.org/v3/index.json --api-key $(NuGetPackagePushKey)
+        displayName: 'Publish Release Nuget Package'
+
+  - ${{ if eq(parameters.toLive, false) }}:
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish NuGet to RSKTools'
+        inputs:
+          command: 'push'
+          arguments: '--skip-duplicate'
+          packagesToPush: '${{ parameters.packageToPublish }}'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: '75d50f4c-8a7b-4618-b9de-bae4820efa8f'

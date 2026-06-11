@@ -12,33 +12,22 @@ variables:
   value: '4.0.0.0'
 - name: identityPackageVersion
   value: '5.0.0.0'
-- name: RunSqlServerTest
-  value: 'true'
+
 stages:
-- stage: __default
+- stage: Build
   jobs:
-  - job: ''
+  - job: BuildAllProjects
     strategy:
       matrix:
         linux:
           imageName: 'ubuntu-latest'
-          shouldPack: true
         mac:
          imageName: 'macOS-latest'
-         shouldPack: true
         windows:
           imageName: 'windows-latest'
-          shouldPack: true
     pool:
       vmImage: $(imageName)
     steps:
-    - task: Bash@3
-      displayName: Create LocalNuget folder
-      inputs:
-        targetType: inline
-        script: |
-          mkdir LocalNuget
-        workingDirectory: $(Build.SourcesDirectory)
     - task: UseDotNet@2
       displayName: Install .NET Core sdk version 10.x
       inputs:
@@ -56,80 +45,26 @@ stages:
         feedsToUse: 'config'
         nugetConfigPath: $(System.DefaultWorkingDirectory)/NuGet.AzDO.config
     - task: DotNetCoreCLI@2
-      displayName: dotnet build **/Rsk.Audit.csproj
+      displayName: dotnet build Rsk.Audit.csproj
       inputs: 
         command: 'build'
         projects: '**/Rsk.Audit.csproj'
         arguments: -c $(buildConfiguration) --no-restore /p:Version="$(packageVersion)"
     - task: DotNetCoreCLI@2
-      displayName: dotnet build **/Rsk.Audit.EF.csproj
+      displayName: dotnet build Rsk.Audit.EF.csproj
       inputs: 
         command: 'build'
         projects: '**/Rsk.Audit.EF.csproj'
         arguments: -c $(buildConfiguration) --no-restore /p:Version="$(efPackageVersion)"
     - task: DotNetCoreCLI@2
-      displayName: dotnet build **/Rsk.DuendeIdentityServer.AuditEventSink.csproj
+      displayName: dotnet build Rsk.DuendeIdentityServer.AuditEventSink.csproj
       inputs: 
         command: 'build'
         projects: '**/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
         arguments: -c $(buildConfiguration) --no-restore /p:Version="$(identityPackageVersion)"
     - task: DotNetCoreCLI@2
-      displayName: dotnet build **/RSK.IdentityServer4.AuditEventSink.csproj
-      inputs: 
-        command: 'build'
-        projects: '**/RSK.IdentityServer4.AuditEventSink.csproj'
-        arguments: -c $(buildConfiguration) --no-restore"
-    - task: DotNetCoreCLI@2
       displayName: dotnet test - Run All Tests
       inputs: 
         command: 'test'
         projects: '**/*Tests*.csproj'
-        arguments: -c $(buildConfiguration) --no-restore"
-    - task: DotNetCoreCLI@2
-      displayName: Package **/Rsk.Audit.csproj for Nuget
-      inputs:
-        command: 'pack'
-        packagesToPack: '**/Rsk.Audit.csproj'
-        nobuild: true
-        includesymbols: true
-        versionEnvVar: packageVersion
-        versioningScheme: 'byEnvVar'
-        verbosityPack: 'Normal'
-        outputDir: LocalNuget
-    - task: DotNetCoreCLI@2
-      displayName: Package **/Rsk.Audit.EF.csproj for Nuget
-      inputs:
-        command: 'pack'
-        packagesToPack: '**/Rsk.Audit.EF.csproj'
-        nobuild: true
-        includesymbols: true
-        versionEnvVar: efPackageVersion
-        versioningScheme: 'byEnvVar'
-        verbosityPack: 'Normal'
-        outputDir: LocalNuget
-    - task: DotNetCoreCLI@2
-      displayName: Package **/Rsk.DuendeIdentityServer.AuditEventSink.csproj for Nuget
-      inputs:
-        command: 'pack'
-        packagesToPack: '**/Rsk.DuendeIdentityServer.AuditEventSink.csproj'
-        nobuild: true
-        includesymbols: true
-        versionEnvVar: identityPackageVersion
-        versioningScheme: 'byEnvVar'
-        verbosityPack: 'Normal'
-        outputDir: LocalNuget
-    - task: CopyFiles@2
-      condition: and(succeeded(), eq(variables['shouldPack'], true))
-      displayName: 'Copy nupkg to artifact directory'
-      inputs:
-        Contents: 'LocalNuget/*.nupkg'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-        CleanTargetFolder: true
-        flattenFolders: true
-    - task: PublishBuildArtifacts@1
-      condition: and(succeeded(), eq(variables['shouldPack'], true))
-      displayName: Publish Audit artifacts
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: Audit nupkg
-        publishLocation: 'Container'        
+        arguments: -c $(buildConfiguration) --no-restore
