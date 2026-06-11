@@ -57,20 +57,20 @@ namespace RSK.Audit.Tests.EF
         }
 
         [Fact]
-        public void RecordSuccess_WhenCalledAndFails_ShouldThrowAuditWriteException()
+        public async Task RecordSuccess_WhenCalledAndFails_ShouldThrowAuditWriteException()
         {
             auditEntities.Setup(ae => ae.Add(It.IsAny<AuditEntity>()))
                 .Throws(new Exception("Blah"));
 
             var sut = CreateSut();
 
-            Assert.ThrowsAsync<AuditWriteException>(() =>
+            await Assert.ThrowsAsync<AuditWriteException>(() =>
                 sut.RecordSuccess(AuditContextMockingHelper.CreateAuditEventContext( 
                     
                 new UserResourceActor(fixture.Create<string>()), 
                 fixture.Create<string>(), 
                 new AuditableResource(fixture.Create<string>()),
-                fixture.Create<string>()))).Wait();
+                fixture.Create<string>())));
         }
 
         private void RecordAction( Func<AuditRecorder,Func<IAuditEventArguments,Task>> recordMethodFactory , bool isSuccess)

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RSK.Audit;
 using RSK.Audit.EF;
@@ -29,7 +30,7 @@ namespace Rsk.Audit.Tests.Integration.EF
         }
       
         [Fact]
-        public void GivenIHaveAnAuditSource_WhenAnAttemptIsMadeToRecordSuccess_ThenShouldWriteNewAuditEntryInDatabase()
+        public async Task GivenIHaveAnAuditSource_WhenAnAttemptIsMadeToRecordSuccess_ThenShouldWriteNewAuditEntryInDatabase()
         {
             var expectedSubject = new UserResourceActor("andy");
             const string expectedtedAction = "Login";
@@ -38,7 +39,7 @@ namespace Rsk.Audit.Tests.Integration.EF
 
             var sut = CreateSut();
 
-            sut.RecordSuccess(AuditContextMockingHelper.CreateAuditEventContext( expectedSubject,expectedtedAction,expectedResource,expectedDescription)).Wait();
+            await sut.RecordSuccess(AuditContextMockingHelper.CreateAuditEventContext( expectedSubject,expectedtedAction,expectedResource,expectedDescription));
 
             var auditEntries = databaseContext.AuditEntries.Where(ae => ae.Succeeded &&
                                                                       ae.SubjectIdentifier == expectedSubject.Identifier &&
@@ -53,7 +54,7 @@ namespace Rsk.Audit.Tests.Integration.EF
         }
 
         [Fact]
-        public void GivenIHaveAnAuditSource_WhenAnAttemptIsMadeToRecordFailure_ThenShouldWriteNewAuditEntryInDatabase()
+        public async Task GivenIHaveAnAuditSource_WhenAnAttemptIsMadeToRecordFailure_ThenShouldWriteNewAuditEntryInDatabase()
         {
             var expectedSubject = new UserResourceActor("andy");
             const string expectedtedAction = "Login";
@@ -62,7 +63,7 @@ namespace Rsk.Audit.Tests.Integration.EF
 
             var sut = CreateSut();
 
-            sut.RecordFailure(AuditContextMockingHelper.CreateAuditEventContext(expectedSubject, expectedtedAction, expectedResource,expectedDescription)).Wait();
+            await sut.RecordFailure(AuditContextMockingHelper.CreateAuditEventContext(expectedSubject, expectedtedAction, expectedResource,expectedDescription));
 
             var auditEntries = databaseContext.AuditEntries.Where(ae => !ae.Succeeded &&
                                                                         ae.SubjectIdentifier == expectedSubject.Identifier &&

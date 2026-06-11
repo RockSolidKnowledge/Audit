@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using RSK.Audit.EF;
 using Rsk.Audit.Tests;
@@ -238,11 +239,11 @@ namespace RSK.Audit.Tests.EF
 
 
         [Fact]
-        public void ExecuteAscending_WhenCalled_ShouldReturnAllSuccessfullRecordsAndCount()
+        public async Task ExecuteAscending_WhenCalled_ShouldReturnAllSuccessfullRecordsAndCount()
         {
             var entities = SetupFindSuccessEntities();
 
-            var result = CreateSut().ExecuteAscending().Result;
+            var result = await CreateSut().ExecuteAscending();
 
             var expectedResultSet = entities.Where(ae => ae.Succeeded).ToList();
 
@@ -252,11 +253,11 @@ namespace RSK.Audit.Tests.EF
 
 
         [Fact]
-        public void ExecuteDescending_WhenCalled_ShouldReturnAllSuccessfullRecordsAndCount()
+        public async Task ExecuteDescending_WhenCalled_ShouldReturnAllSuccessfullRecordsAndCount()
         {
             var entities = SetupFindSuccessEntities();
 
-            var result = CreateSut().ExecuteDescending().Result;
+            var result = await CreateSut().ExecuteDescending();
 
             var expectedResultSet = entities.Where(ae => ae.Succeeded).Reverse().ToList();
 
@@ -266,13 +267,13 @@ namespace RSK.Audit.Tests.EF
 
 
         [Fact]
-        public void ExecuteAscending_WhenCalled_ShouldReturnAllRecordsSortedBySource()
+        public async Task ExecuteAscending_WhenCalled_ShouldReturnAllRecordsSortedBySource()
         {
             var entities = CreateAuditEntities();
 
             baseQuery = entities.AsQueryable();
 
-            var result = CreateSut().ExecuteAscending(AuditQuerySort.Source).Result;
+            var result = await CreateSut().ExecuteAscending(AuditQuerySort.Source);
 
             var expectedResultSet = entities.OrderBy(ae => ae.Source).ToList();
 
@@ -285,7 +286,7 @@ namespace RSK.Audit.Tests.EF
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
-        public void ExecuteAscending_WhenPagingEnabled_ShouldReturnResultsPaged(int page)
+        public async Task ExecuteAscending_WhenPagingEnabled_ShouldReturnResultsPaged(int page)
         {
             const int rowsPerPage = 2;
 
@@ -295,7 +296,7 @@ namespace RSK.Audit.Tests.EF
 
             var sut = new AuditQueryWithPaging(baseQuery,page,rowsPerPage);
 
-            var results = sut.ExecuteAscending().Result;
+            var results = await sut.ExecuteAscending();
 
             var expectedQuery = entities.OrderBy(ae => ae.When);
             var expectedCount = expectedQuery.Count();
