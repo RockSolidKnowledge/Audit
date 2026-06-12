@@ -17,7 +17,7 @@
 
     <ItemGroup>
 	    <PackageReference Include="Open.IdentityServer" Version="1.0.0" />
-        <PackageReference Include="Rsk.Audit" Version="3.0.0" />
+        <PackageReference Include="Rsk.Audit" Version="4.0.0" />
     </ItemGroup>
 
 	<ItemGroup>
