@@ -6,7 +6,7 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 - name: identityPackageVersion
-  value: '5.0.0.0'
+  value: '6.0.0.0'
 
 stages:
 - stage: Build
