@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Rsk.Audit\Rsk.Audit.csproj" />
+      <PackageReference Include="Rsk.Audit" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -20,7 +20,7 @@ steps:
 
   - ${{ if eq(parameters.toLive, true) }}:
       - bash: |
-          dotnet nuget push ${{ parameters.packageToPublish }} --source https://api.nuget.org/v3/index.json --api-key $(NuGetPackagePushKey)
+          dotnet nuget push "${{ parameters.packageToPublish }}" --source https://api.nuget.org/v3/index.json --api-key $(NuGetPackagePushKey) --skip-duplicate
         displayName: 'Publish Release Nuget Package'
 
   - ${{ if eq(parameters.toLive, false) }}:

@@ -1,6 +1,8 @@
 trigger: none
+pr: none
 
 variables:
+- group: "NugetPackageRelease"
 - name: buildConfiguration
   value: 'Release'
 - name: identityPackageVersion
@@ -83,5 +85,6 @@ stages:
             steps:
               - template: templates/publish-nuget.yml
                 parameters:
+                  toLive: true
                   artifact: 'Rsk.DuendeIdentityServer.AuditEventSink nupkg'
                   packageToPublish: '$(Pipeline.Workspace)/Rsk.DuendeIdentityServer.AuditEventSink nupkg/*.nupkg'

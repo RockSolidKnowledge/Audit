@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Moq;
 using Rsk.Audit.Tests;
@@ -34,7 +35,7 @@ namespace RSK.Audit.Tests
         }
 
         [Fact]
-        public void RecordSuccess_WhenCalled_ShouldLocalizeActionAndForward()
+        public async Task RecordSuccess_WhenCalled_ShouldLocalizeActionAndForward()
         {
             var expectedSubject = new UserResourceActor( "fred");
             var expectedResource = new AuditableResource("identityServer");
@@ -49,7 +50,7 @@ namespace RSK.Audit.Tests
 
             IAuditEventArguments auditEventContext =
                 AuditContextMockingHelper.CreateAuditEventContext(expectedSubject, actionKey, expectedResource, "");
-            sut.RecordSuccess(auditEventContext).Wait();
+            await sut.RecordSuccess(auditEventContext);
 
             recordAuditableActions.Verify(
                 raa => raa.RecordSuccess(It.Is<IAuditEventArguments>(aec => aec.Action == expectedTranslationText)),
@@ -57,7 +58,7 @@ namespace RSK.Audit.Tests
         }
 
         [Fact]
-        public void RecordFailure_WhenCalled_ShouldLocalizeActionAndForward()
+        public async Task RecordFailure_WhenCalled_ShouldLocalizeActionAndForward()
         {
             var expectedSubject = new UserResourceActor("fred");
             var expectedResource = new AuditableResource("identityServer");
@@ -72,7 +73,7 @@ namespace RSK.Audit.Tests
 
             IAuditEventArguments auditEventContext =
                 AuditContextMockingHelper.CreateAuditEventContext(expectedSubject, actionKey, expectedResource, "");
-            sut.RecordFailure(auditEventContext).Wait();
+            await sut.RecordFailure(auditEventContext);
 
             recordAuditableActions.Verify(
                 raa => raa.RecordFailure(It.Is<IAuditEventArguments>(aec => aec.Action == expectedTranslationText)),Times.Once);
@@ -80,7 +81,7 @@ namespace RSK.Audit.Tests
 
 
         [Fact]
-        public void RecordFailure_WhenCalled_ShouldLocalizeActionContext()
+        public async Task RecordFailure_WhenCalled_ShouldLocalizeActionContext()
         {
             var expectedSubject = new UserResourceActor("fred");
             var expectedResource = new AuditableResource("identityServer");
@@ -93,7 +94,7 @@ namespace RSK.Audit.Tests
 
             IAuditEventArguments auditEventContext =
                 AuditContextMockingHelper.CreateAuditEventContext(expectedSubject, action, expectedResource, "");
-            sut.RecordSuccess(auditEventContext).Wait();
+            await sut.RecordSuccess(auditEventContext);
 
             recordAuditableActions.Verify(raa => raa.RecordSuccess(It.IsAny<LocalizedAuditEventArguments>()), Times.Once);
         }
