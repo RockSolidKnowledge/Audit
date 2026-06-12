@@ -85,5 +85,6 @@ stages:
             steps:
               - template: templates/publish-nuget.yml
                 parameters:
+                  toLive: true
                   artifact: 'Rsk.Audit.EF nupkg'
                   packageToPublish: '$(Pipeline.Workspace)/Rsk.Audit.EF nupkg/*.nupkg'
