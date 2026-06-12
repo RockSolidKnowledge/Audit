@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
@@ -17,13 +18,13 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task PersistAsync(Event evt)
+        public Task PersistAsync(Event evt, CancellationToken cancellationToken = default)
         {
             var eventSinkTasks = new List<Task>();
 
             foreach (var eventSink in EventSinks)
             {
-                eventSinkTasks.Add(ProtectedExecution(() => eventSink.PersistAsync(evt)));    
+                eventSinkTasks.Add(ProtectedExecution(() => eventSink.PersistAsync(evt, cancellationToken)));    
             }
 
             return Task.WhenAll(eventSinkTasks);

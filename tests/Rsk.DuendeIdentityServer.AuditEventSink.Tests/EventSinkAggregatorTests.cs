@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
@@ -60,7 +61,7 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink.Tests
         {
             public int WasCalled { get; private set; }
 
-            public Task PersistAsync(Event evt)
+            public Task PersistAsync(Event evt, CancellationToken cancellationToken = default)
             {
                 WasCalled++;
                 return Task.CompletedTask;
@@ -71,7 +72,7 @@ namespace Rsk.DuendeIdentityServer.AuditEventSink.Tests
         {
             public int WasCalled { get; private set; }
 
-            public Task PersistAsync(Event evt)
+            public Task PersistAsync(Event evt, CancellationToken cancellationToken = default)
             {
                 WasCalled++;
                 throw new Exception("Blah");
