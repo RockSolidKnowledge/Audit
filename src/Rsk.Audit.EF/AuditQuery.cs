@@ -114,7 +114,7 @@ namespace RSK.Audit.EF
 
         public IAuditQuery AndResourceIdentifier(Matches matchType, string resourceIdentifier)
         {
-            criteriaBuilder.AndStringMatch(matchType, nameof(AuditEntity.Resource), resourceIdentifier);
+            criteriaBuilder.AndStringMatch(matchType, nameof(AuditEntity.ResourceIdentifier), resourceIdentifier);
 
             return this;
         }
